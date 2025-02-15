@@ -1,0 +1,162 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<!-- FontAwesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .dashboard-container {
+        display: flex;
+        height: 100vh;
+    }
+
+    /* Toggle Button */
+    .openbtn {
+        font-size: 20px;
+        cursor: pointer;
+        background-color: #343A40;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        width: 100%;
+        text-align: right;
+        display: flex;
+        justify-content: end;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        height: 100vh;
+        width: 250px;
+        background-color: #343a40;
+        padding-top: 20px;
+        transition: 0.5s;
+        overflow-y: auto;
+        white-space: nowrap;
+    }
+
+        .sidebar a {
+            padding: 10px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.5s;
+        }
+
+            .sidebar a:hover {
+                background-color: #007bff;
+            }
+
+        /* Collapsed Sidebar */
+        .sidebar.collapsed {
+            width: 60px;
+        }
+
+            .sidebar.collapsed a {
+                justify-content: center;
+                padding: 10px 0;
+            }
+
+                .sidebar.collapsed a span {
+                    display: none;
+                }
+
+    /* Content */
+    .content {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    transition: margin-left 0.5s; /* Ensures it takes full height */
+}
+
+
+        .content.expanded {
+            margin-left: 60px;
+        }
+
+    /* Responsive adjustments */
+    screen (max-width: 768px) {
+        .sidebar {
+            width: 100%;
+            height: auto;
+            position: relative;
+        }
+
+        .sidebar.collapsed {
+            width: 100%;
+        }
+
+        /* .content { */
+        /*     margin-left: 0; */
+        /* } */
+
+        .content.expanded {
+            margin-left: 0;
+        }
+    }
+</style>
+
+<!-- Dashboard -->
+<div class="dashboard-container">
+    
+        <!-- Sidebar -->
+        <div id="mySidebar" class="sidebar">
+            <button class="openbtn" onclick="toggleSidebar()">☰</button>
+            <a href="#"><i class="fa fa-home"></i> <span>Dashboard</span></a>
+            <a href="#"><i class="fa fa-clock"></i> <span>Visit Hours</span></a>
+            <a href="#"><i class="fa fa-envelope"></i> <span>Messages</span></a>
+            <a href="#"><i class="fa fa-inbox"></i> <span>Receive Messages</span></a>
+            <a href="#"><i class="fa fa-user-graduate"></i> <span>Manage Students</span></a>
+            <a href="#"><i class="fa fa-book"></i> <span>All Books</span></a>
+            <a href="#"><i class="fa fa-plus-circle"></i> <span>Add Books</span></a>
+            <a href="#"><i class="fa fa-exchange-alt"></i> <span>Issue/Return Requests</span></a>
+            <a href="#"><i class="fa fa-book-open"></i> <span>Currently Issued Books</span></a>
+            <a href="#"><i class="fa fa-trash-alt"></i> <span>Recently Deleted Books</span></a>
+            <a href="#"><i class="fa fa-history"></i> <span>Transactions</span></a>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent" class="content">
+            <div class="card mx-auto text-center" style="max-width: 350px;">
+                <!-- Profile Image with Upload Button -->
+                <div class="position-relative mx-auto" style="width: 150px; height: 150px;">
+                    <img id="profileImage" src="@(@User.FindFirst("ProfilePic")?.Value ?? "/images/profile.png")"
+                         class="rounded-circle shadow"
+                         alt="Admin Image" style="width: 100%; height: 100%; object-fit: cover; border: 4px solid #fff;">
+                </div>
+
+                <div class="card-body">
+                    <h4 class="card-title">Administrator</h4>
+                    <p class="card-text"><strong>Email:</strong> @User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value</p>
+                    <p class="card-text"><strong>Contact:</strong> 09203853517</p>
+                    <div class="btn-group w-100 mt-3 gap-2">
+                        <button class="btn btn-primary">Edit Details</button>
+                        <button class="btn btn-primary">Add Admin</button>
+                        <button class="btn btn-primary">Add Librararian / Library Staff</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Sidebar Toggle -->
+<script>
+    function toggleSidebar() {
+        var sidebar = document.getElementById("mySidebar");
+        var content = document.getElementById("mainContent");
+
+        sidebar.classList.toggle("collapsed");
+        content.classList.toggle("expanded");
+    }
+</script>

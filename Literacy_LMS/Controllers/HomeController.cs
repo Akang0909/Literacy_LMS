@@ -13,6 +13,11 @@ namespace Literacy_LMS.Controllers
             _logger = logger;
         }
 
+        public IActionResult Dashboard()
+        {
+            return View();
+        }
+
         public IActionResult Index()
         {
             return View();

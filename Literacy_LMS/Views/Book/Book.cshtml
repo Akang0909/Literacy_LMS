@@ -1,0 +1,133 @@
+﻿@model X.PagedList.IPagedList<Literacy_LMS.Models.Book>
+@using X.PagedList.Mvc.Core
+
+
+
+
+<h2>Book List</h2>
+
+<div class="mb-4">
+    <form method="GET">
+        <div class="input-group mb-3">
+            <input type="text" id="searchInput" name="search" class="form-control" placeholder="Search"
+                   value="@Context.Request.Query["search"]">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+
+        <!-- Filtering Options -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <select name="sectionFilter" id="sectionFilter" class="form-control">
+                    <option value="">Select Section</option>
+                    <option value="General Reference" selected="@(Context.Request.Query["sectionFilter"] == "General Reference")">General Reference</option>
+                    <option value="Fiction" selected="@(Context.Request.Query["sectionFilter"] == "Fiction")">Fiction</option>
+                    <option value="Non-Fiction" selected="@(Context.Request.Query["sectionFilter"] == "Non-Fiction")">Non-Fiction</option>
+                    <option value="Science" selected="@(Context.Request.Query["sectionFilter"] == "Science")">Science</option>
+                    <option value="Mathematics" selected="@(Context.Request.Query["sectionFilter"] == "Mathematics")">Mathematics</option>
+                    <option value="History" selected="@(Context.Request.Query["sectionFilter"] == "History")">History</option>
+                    <option value="Philosophy" selected="@(Context.Request.Query["sectionFilter"] == "Philosophy")">Philosophy</option>
+                    <option value="Religion" selected="@(Context.Request.Query["sectionFilter"] == "Religion")">Religion</option>
+                    <option value="Arts & Music" selected="@(Context.Request.Query["sectionFilter"] == "Arts & Music")">Arts & Music</option>
+                    <option value="Language & Literature" selected="@(Context.Request.Query["sectionFilter"] == "Language & Literature")">Language & Literature</option>
+                    <option value="Social Sciences" selected="@(Context.Request.Query["sectionFilter"] == "Social Sciences")">Social Sciences</option>
+                    <option value="Technology & Engineering" selected="@(Context.Request.Query["sectionFilter"] == "Technology & Engineering")">Technology & Engineering</option>
+                    <option value="Medical & Health Sciences" selected="@(Context.Request.Query["sectionFilter"] == "Medical & Health Sciences")">Medical & Health Sciences</option>
+                    <option value="Business & Economics" selected="@(Context.Request.Query["sectionFilter"] == "Business & Economics")">Business & Economics</option>
+                    <option value="Psychology & Self-Help" selected="@(Context.Request.Query["sectionFilter"] == "Psychology & Self-Help")">Psychology & Self-Help</option>
+                    <option value="Elementary Education" selected="@(Context.Request.Query["sectionFilter"] == "Elementary Education")">Elementary Education</option>
+                    <option value="High School Curriculum" selected="@(Context.Request.Query["sectionFilter"] == "High School Curriculum")">High School Curriculum</option>
+                    <option value="College Textbooks" selected="@(Context.Request.Query["sectionFilter"] == "College Textbooks")">College Textbooks</option>
+                    <option value="Engineering & IT" selected="@(Context.Request.Query["sectionFilter"] == "Engineering & IT")">Engineering & IT</option>
+                    <option value="Law & Political Science" selected="@(Context.Request.Query["sectionFilter"] == "Law & Political Science")">Law & Political Science</option>
+                    <option value="Medical & Nursing Books" selected="@(Context.Request.Query["sectionFilter"] == "Medical & Nursing Books")">Medical & Nursing Books</option>
+                    <option value="Computer Science & Programming" selected="@(Context.Request.Query["sectionFilter"] == "Computer Science & Programming")">Computer Science & Programming</option>
+                    <option value="Teacher’s Resources" selected="@(Context.Request.Query["sectionFilter"] == "Teacher’s Resources")">Teacher’s Resources</option>
+                    <option value="Theses & Dissertations" selected="@(Context.Request.Query["sectionFilter"] == "Theses & Dissertations")">Theses & Dissertations</option>
+                    <option value="Reserved Books (Faculty-Use Only)" selected="@(Context.Request.Query["sectionFilter"] == "Reserved Books (Faculty-Use Only)")">Reserved Books (Faculty-Use Only)</option>
+                    <option value="Reference Materials" selected="@(Context.Request.Query["sectionFilter"] == "Reference Materials")">Reference Materials</option>
+                    <option value="Periodicals & Magazines" selected="@(Context.Request.Query["sectionFilter"] == "Periodicals & Magazines")">Periodicals & Magazines</option>
+                    <option value="New Arrivals" selected="@(Context.Request.Query["sectionFilter"] == "New Arrivals")">New Arrivals</option>
+                    <option value="Bestsellers" selected="@(Context.Request.Query["sectionFilter"] == "Bestsellers")">Bestsellers</option>
+                    <option value="Rare Books & Archives" selected="@(Context.Request.Query["sectionFilter"] == "Rare Books & Archives")">Rare Books & Archives</option>
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <select name="statusFilter" id="statusFilter" class="form-control">
+                    <option value="">Select Status</option>
+                    <option value="Good" selected="@(Context.Request.Query["statusFilter"] == "Good")">Good</option>
+                    <option value="Damage" selected="@(Context.Request.Query["statusFilter"] == "Damage")">Damage</option>
+                    <option value="Dilapidated" selected="@(Context.Request.Query["statusFilter"] == "Dilapidated")">Dilapidated</option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+
+@if (!Model.Any())
+{
+    <p>No results found.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Book ID</th>
+                <th>Book Section</th>
+                <th>Book Name</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="bookTableBody">
+            @foreach (var book in Model)
+            {
+                <tr>
+                    <td>@book.BookID</td>
+                    <td>@book.BookSection</td>
+                    <td>@book.Textbook</td>
+                    <td>@book.BookStatus</td>
+                    <td>
+                        <a href="@Url.Action("Details", "Book", new { id = book.BookID })" class="btn btn-info">Details</a>
+                        <a href="@Url.Action("Edit", "Book", new { id = book.BookID })" class="btn btn-success">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+    </div>
+}
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        function filterBooks() {
+            var search = $('#searchInput').val();
+            var sectionFilter = $('#sectionFilter').val();
+            var statusFilter = $('#statusFilter').val();
+
+            $.ajax({
+                url: '@Url.Action("FilterBooks", "Book")', // Controller action
+                type: 'GET',
+                data: {
+                    search: search,
+                    sectionFilter: sectionFilter,
+                    statusFilter: statusFilter
+                },
+                success: function (response) {
+                    $('#bookTableBody').html(response); // Update table
+                }
+            });
+        }
+
+        // Trigger search when typing or selecting filters
+        $('#searchInput, #sectionFilter, #statusFilter').on('keyup change', filterBooks);
+    });
+</script>
+

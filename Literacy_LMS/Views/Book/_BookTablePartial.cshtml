@@ -1,0 +1,15 @@
+﻿@model IEnumerable<Literacy_LMS.Models.Book>
+
+@foreach (var book in Model)
+{
+    <tr>
+        <td>@book.BookID</td>
+        <td>@book.BookSection</td>
+        <td>@book.Textbook</td>
+        <td>@book.BookStatus</td>
+        <td>
+            <a href="@Url.Action("Details", "Book", new { id = book.BookID })" class="btn btn-info">Details</a>
+            <a href="@Url.Action("Edit", "Book", new { id = book.BookID })" class="btn btn-success">Edit</a>
+        </td>
+    </tr>
+}

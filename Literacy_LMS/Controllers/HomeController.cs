@@ -17,7 +17,16 @@ namespace Literacy_LMS.Controllers
         {
             return View();
         }
-
+        public IActionResult Add()
+        {
+            //var book = new Book();
+            //ViewData["Title"] = "Add Book";
+            return View();
+        }
+        public IActionResult Register()
+        {
+            return View();
+        }
         public IActionResult Index()
         {
             return View();

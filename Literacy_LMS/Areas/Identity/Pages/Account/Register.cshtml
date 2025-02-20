@@ -33,6 +33,9 @@
 
 <div class="d-flex justify-content-center align-items-center vh-100">
     <div class="col-md-4 signup-container">
+        <a href="javascript:history.back()" class="btn btn-close">
+            
+        </a>
         <h1 class="text-center">@ViewData["Title"]</h1>
         <section>
             <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
@@ -53,6 +56,9 @@
                     <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                 </div>
                 <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+                <div class="text-center mt-3">
+                    <small>Already have an account? <a asp-page="/Account/Login">Sign in</a></small>
+                </div>
             </form>
         </section>
     </div>

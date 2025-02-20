@@ -1,0 +1,35 @@
+﻿@model Literacy_LMS.Models.VisitHours
+
+@{
+    ViewBag.Title = "Library Visit Hours";
+}
+
+<h2 class="mb-4">Library Visit Hours</h2>
+
+@if (Model != null)
+{
+    <form asp-action="Update" asp-controller="VisitHours" method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label asp-for="OpeningTime" class="form-label">Opening Time</label>
+            <input type="time" class="form-control" asp-for="OpeningTime" required />
+            <span class="text-danger" asp-validation-for="OpeningTime"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ClosingTime" class="form-label">Closing Time</label>
+            <input type="time" class="form-control" asp-for="ClosingTime" required />
+            <span class="text-danger" asp-validation-for="ClosingTime"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="javascript:history.back()" class="btn btn-secondary">Back</a>
+    </form>
+}
+else
+{
+    <div class="alert alert-warning" role="alert">
+        No visit hours set yet.
+    </div>
+}

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Literacy_LMS.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Literacy_LMS.Data
@@ -9,6 +10,8 @@ namespace Literacy_LMS.Data
             : base(options)
         {
         }
+        public DbSet<Book> Books { get; set; }
+        public DbSet<VisitHours> VisitHours { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

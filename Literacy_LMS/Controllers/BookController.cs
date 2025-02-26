@@ -4,6 +4,7 @@ using Literacy_LMS.Data;
 using Literacy_LMS.Models;
 using X.PagedList;
 using X.PagedList.Extensions;
+using Microsoft.CodeAnalysis.Scripting;
 
 namespace Literacy_LMS.Controllers
 {
@@ -23,6 +24,60 @@ namespace Literacy_LMS.Controllers
             ViewData["Title"] = "Add Book";
             return View(new Book());
         }
+
+        public IActionResult Details(int id)
+        {
+            var book = _context.Books.FirstOrDefault(b => b.BookID == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+            return View(book);
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var book = _context.Books.FirstOrDefault(b => b.BookID == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+            return View(book);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Book book)
+        {
+            if (ModelState.IsValid)
+            {
+                var existingBook = _context.Books.Find(book.BookID);
+                if (existingBook != null)
+                {
+                    existingBook.BookSection = book.BookSection;
+                    existingBook.Subject = book.Subject;
+                    existingBook.Textbook = book.Textbook;
+                    existingBook.CopyrightYear = book.CopyrightYear;
+                    existingBook.Volume = book.Volume;
+                    existingBook.NumberOfCopies = book.NumberOfCopies;
+                    existingBook.Author = book.Author;
+                    existingBook.ISBN = book.ISBN;
+                    existingBook.BookStatus = book.BookStatus;
+
+                    _context.SaveChanges();
+
+                    TempData["SuccessMessage"] = "Changes saved successfully!";
+                }
+
+                return RedirectToAction("Edit", new { id = book.BookID });
+            }
+
+            return View(book);
+        }
+
+
+
 
         // POST: Book/Add
         [HttpPost]
@@ -48,7 +103,7 @@ namespace Literacy_LMS.Controllers
             // Convert to PagedList
             var pagedBooks = booksQuery.ToPagedList(page, pageSize);
 
-            return View(pagedBooks);
+            return View("Book", pagedBooks);
         }
 
         // AJAX-based Book Filtering with Pagination
@@ -70,7 +125,7 @@ namespace Literacy_LMS.Controllers
                 .OrderBy(b => b.BookID) // Change 'BookId' to the actual primary key field
                 .ToPagedList(page, pageSize);
 
-            return View(books);
+             return View("Book", books);
         }
 
 
@@ -100,3 +155,5 @@ namespace Literacy_LMS.Controllers
         }
     }
 }
+
+

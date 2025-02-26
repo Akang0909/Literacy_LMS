@@ -1,0 +1,73 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<!-- FontAwesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .dashboard-container {
+        display: flex;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+    }
+
+    .sidebar {
+        height: 97vh;
+        width: 250px;
+        background-color: #343a40;
+        padding-top: 20px;
+        transition: 0.5s;
+        overflow-y: auto;
+        white-space: nowrap;
+        box-sizing: border-box;
+        margin: 0;
+    }
+
+        .sidebar a {
+            padding: 10px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.5s;
+        }
+
+            .sidebar a:hover {
+                background-color: #007bff;
+            }
+
+    .content {
+        flex-grow: 1;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+</style>
+
+<!-- Dashboard -->
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <a href="#"><i class="fa fa-home"></i> <span>Home</span></a>
+        <a href="#"><i class="fa fa-envelope"></i> <span>Messages</span></a>
+        <a href="#"><i class="fa fa-book"></i> <span>All Books</span></a>
+        <a href="#"><i class="fa fa-book-open"></i> <span>Previously Borrowed Books</span></a>
+        <a href="#"><i class="fa fa-book"></i> <span>Currently Borrowed Books</span></a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <h2>Welcome to the Library System</h2>
+    </div>
+</div>

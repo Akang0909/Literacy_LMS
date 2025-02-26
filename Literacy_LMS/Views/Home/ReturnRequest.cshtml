@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Renew Request";
+}
+
+<div class="container mt-3">
+
+    <!-- Top Buttons -->
+    <div class="d-flex justify-content-start mb-3">
+        <button class="btn btn-primary me-2" id="btnIssue">Issue Request</button>
+        <button class="btn btn-warning me-2" id="btnRenew">Renew Request</button>
+        <button class="btn btn-success" id="btnReturn">Return Request</button>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="mb-3">
+        <input type="text" id="searchBar" class="form-control" placeholder="Search..." autocomplete="off">
+    </div>
+
+    <!-- Table -->
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Borrower ID</th>
+                <th>Book ID</th>
+                <th>Book Name</th>
+                <th>Dues</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <!-- AJAX will populate this -->
+        </tbody>
+    </table>
+</div>
+
+<!-- AJAX for Live Search -->
+<script>
+    $(document).ready(function () {
+        $("#searchBar").on("keyup", function () {
+            var query = $(this).val();
+            $.ajax({
+                url: '@Url.Action("SearchBooks", "Library")', // Update with your actual controller
+                type: "GET",
+                data: { searchTerm: query },
+                success: function (data) {
+                    $("#tableBody").html(data);
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    document.getElementById("btnIssue").onclick = function () {
+        window.location.href = "/Home/IssueRequest";
+    };
+
+    document.getElementById("btnRenew").onclick = function () {
+        window.location.href = "/Home/RenewRequest"; // Update this based on your controller
+    };
+
+    document.getElementById("btnReturn").onclick = function () {
+        window.location.href = "/Home/ReturnRequest"; // Update this based on your controller
+    };
+</script>

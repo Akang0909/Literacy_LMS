@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Send a Message";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-light">
+            <h5>Send a message</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="SendMessage" method="post">
+                <div class="mb-3">
+                    <label for="receiverId" class="form-label fw-bold">Receiver ID No:</label>
+                    <input type="text" id="receiverId" name="ReceiverId" class="form-control" placeholder="Id No" required>
+                </div>
+                <div class="mb-3">
+                    <label for="senderName" class="form-label fw-bold">Sender's Name:</label>
+                    <input type="text" id="senderName" name="SenderName" class="form-control" placeholder="Input your name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label fw-bold">Message:</label>
+                    <textarea id="message" name="Message" class="form-control" placeholder="Enter Message" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Message</button>
+            </form>
+        </div>
+    </div>
+</div>

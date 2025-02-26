@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using Literacy_LMS.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace Literacy_LMS.Controllers
 {
@@ -13,10 +15,52 @@ namespace Literacy_LMS.Controllers
             _logger = logger;
         }
 
+        [Authorize]
         public IActionResult Dashboard()
         {
             return View();
         }
+
+        public IActionResult Messages()
+        {
+            return View();
+        }
+
+        public IActionResult Details()
+        {
+            return View();
+        }
+
+        public IActionResult Edit()
+        {
+            return View();
+        }
+
+
+        public IActionResult ManageStudents()
+        {
+            return View();
+        }
+
+        public IActionResult RecievedMessages()
+        {
+            return View();
+        }
+        public IActionResult IssueRequest()
+        {
+            return View();
+        }
+
+        public IActionResult RenewRequest()
+        {
+            return View();
+        }
+
+        public IActionResult ReturnRequest()
+        {
+            return View();
+        }
+
         public IActionResult Add()
         {
             //var book = new Book();

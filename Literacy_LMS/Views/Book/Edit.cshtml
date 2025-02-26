@@ -1,0 +1,113 @@
+﻿@model Literacy_LMS.Models.Book
+
+<div class="container mt-4">
+    <div class="card shadow-sm p-4">
+        <h2 class="mb-4">Edit Book Details</h2>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <script>
+                setTimeout(function () {
+                    location.reload();
+                }, 2000); // Reload after 2 seconds
+            </script>
+        }
+
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="BookID" />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Book Section</label>
+                        <select class="form-control" asp-for="BookSection" required>
+                            <option value="">-- Select Book Section --</option>
+                            <option value="General Reference">General Reference</option>
+                            <option value="Fiction">Fiction</option>
+                            <option value="Non-Fiction">Non-Fiction</option>
+                            <option value="Science">Science</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="History">History</option>
+                            <option value="Philosophy">Philosophy</option>
+                            <option value="Religion">Religion</option>
+                            <option value="Arts & Music">Arts & Music</option>
+                            <option value="Language & Literature">Language & Literature</option>
+                            <option value="Social Sciences">Social Sciences</option>
+                            <option value="Technology & Engineering">Technology & Engineering</option>
+                            <option value="Medical & Health Sciences">Medical & Health Sciences</option>
+                            <option value="Business & Economics">Business & Economics</option>
+                            <option value="Psychology & Self-Help">Psychology & Self-Help</option>
+                            <option value="Elementary Education">Elementary Education</option>
+                            <option value="High School Curriculum">High School Curriculum</option>
+                            <option value="College Textbooks">College Textbooks</option>
+                            <option value="Engineering & IT">Engineering & IT</option>
+                            <option value="Law & Political Science">Law & Political Science</option>
+                            <option value="Medical & Nursing Books">Medical & Nursing Books</option>
+                            <option value="Computer Science & Programming">Computer Science & Programming</option>
+                            <option value="Teacher’s Resources">Teacher’s Resources</option>
+                            <option value="Theses & Dissertations">Theses & Dissertations</option>
+                            <option value="Reserved Books (Faculty-Use Only)">Reserved Books (Faculty-Use Only)</option>
+                            <option value="Reference Materials">Reference Materials</option>
+                            <option value="Periodicals & Magazines">Periodicals & Magazines</option>
+                            <option value="New Arrivals">New Arrivals</option>
+                            <option value="Bestsellers">Bestsellers</option>
+                            <option value="Rare Books & Archives">Rare Books & Archives</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Subject</label>
+                        <input type="text" class="form-control" asp-for="Subject" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Textbook</label>
+                        <input type="text" class="form-control" asp-for="Textbook" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Volume</label>
+                        <input type="number" class="form-control" asp-for="Volume" min="1" />
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Copyright Year</label>
+                        <input type="number" class="form-control" asp-for="CopyrightYear" min="1900" max="2099" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Number of Copies</label>
+                        <input type="number" class="form-control" asp-for="NumberOfCopies" min="0" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Author</label>
+                        <input type="text" class="form-control" asp-for="Author" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">ISBN</label>
+                        <input type="text" class="form-control" asp-for="ISBN" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Book Status</label>
+                        <select class="form-control" asp-for="BookStatus" required>
+                            <option value="">-- Select Book Status --</option>
+                            <option value="Good">Good</option>
+                            <option value="Damaged">Damaged</option>
+                            <option value="Dilapidated">Dilapidated</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="javascript:history.back()" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-success">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>

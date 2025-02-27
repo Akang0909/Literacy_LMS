@@ -15,7 +15,27 @@ namespace Literacy_LMS.Controllers
             _logger = logger;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
+        public class AdminController : Controller
+        {
+            public IActionResult Index()
+            {
+                return View();
+            }
+        }
+
+        [Authorize(Roles = "Librarian")]
+    public IActionResult LibrarianDashboard()
+    {
+        return View("Librarian/Dashboard"); // Ensure this view exists in Views/Home/Librarian/
+    }
+
+    [Authorize(Roles = "Student")]
+    public IActionResult StudentDashboard()
+    {
+        return View("Students/Dashboard"); // Ensure this view exists in Views/Home/Students/
+    }
+
         public IActionResult Dashboard()
         {
             return View();

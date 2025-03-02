@@ -1,0 +1,71 @@
+﻿@model IEnumerable<Literacy_LMS.Models.Book>
+
+<h2>Book List</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <h1>No Books Available</h1>
+}
+else
+{
+    <div id="bookListContainer">
+        <!-- Search Input -->
+        <div class="form-group">
+            <input type="text" id="search" class="form-control" placeholder="Search by Book Name or Section" />
+        </div>
+
+        <!-- Book List Table -->
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>Book ID</th>
+                    <th>Book Section</th>
+                    <th>Book Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="bookList">
+                @foreach (var book in Model)
+                {
+                    <tr>
+                        <td>@book.BookID</td>
+                        <td>@book.BookSection</td>
+                        <td>@book.Textbook</td>
+                        <td>
+                            <a href="@Url.Action("Details", "Students", new { id = book.BookID })" class="btn btn-info">Details</a>
+                            <a href="@Url.Action("Request", "Book", new { id = book.BookID })" class="btn btn-primary">Request</a>
+
+                            @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+                            {
+                                <!-- Archive button only shown to Admin and Staff -->
+                                <a href="@Url.Action("Delete", "Book", new { id = book.BookID })" class="btn btn-secondary">📂 Archive</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@section Scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Attach keyup event listener to the search input
+            $('#search').keyup(function () {
+                var searchQuery = $(this).val();
+
+                // Perform AJAX request to the server
+                $.ajax({
+                    url: '@Url.Action("Books", "Students")',
+                    data: { search: searchQuery },
+                    success: function (data) {
+                        // Update the table with the returned HTML
+                        $('#bookList').html($(data).find('#bookList').html());
+                    }
+                });
+            });
+        });
+    </script>
+}

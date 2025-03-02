@@ -125,7 +125,7 @@ namespace Literacy_LMS.Controllers
                 .OrderBy(b => b.BookID) // Change 'BookId' to the actual primary key field
                 .ToPagedList(page, pageSize);
 
-             return View("Book", books);
+            return View("Book", books);
         }
 
 
@@ -153,6 +153,14 @@ namespace Literacy_LMS.Controllers
 
             return books;
         }
+
+
+
+        //students view 
+   
+
+
+      
     }
 }
 

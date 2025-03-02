@@ -15,8 +15,8 @@
             <div class="container-fluid">
                 <a class="navbar-brand"
                    asp-area=""
-                   asp-controller="Home"
-                   asp-action="@(User.Identity.IsAuthenticated ? "Dashboard" : "Index")">
+                   asp-controller="@((User.IsInRole("Student")) ? "Students" : "Home")"
+                   asp-action="@((User.IsInRole("Student")) ? "Dashboard" : "Dashboard")">
                     Literacy_LMS
                 </a>
 
@@ -26,18 +26,14 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        @* <li class="nav-item"> *@
-                        @*     <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a> *@
-                        @* </li> *@
-                        <li class="nav-item">
-                            @* <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> *@
-                        </li>
+                        <!-- Add any other navbar links you need here -->
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

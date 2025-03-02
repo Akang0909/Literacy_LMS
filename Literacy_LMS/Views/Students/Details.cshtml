@@ -1,0 +1,36 @@
+﻿@model Literacy_LMS.Models.Book
+
+<div class="container mt-4">
+    <div class="card shadow-sm p-4">
+        <h2 class="mb-4">Book Details</h2>
+
+        @if (Model == null)
+        {
+            <h3>Book details not found!</h3>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Book ID:</strong> @Model.BookID</p>
+                    <p><strong>Section:</strong> @Model.BookSection </p>
+                    <p><strong>Subject:</strong> @Model.Subject </p>
+                    <p><strong>Textbook:</strong> @Model.Textbook</p>
+                    <p><strong>Volume:</strong> @(Model.Volume.HasValue ? Model.Volume.Value.ToString() : "Not available")</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Copyright Year:</strong> @Model.CopyrightYear</p>
+                    <p><strong>Author:</strong> @Model.Author </p>
+                    <p><strong>ISBN:</strong> @Model.ISBN </p>
+                    <p><strong>Book Description:</strong> @Model.BookStatus</p>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="javascript:history.back()" class="btn btn-primary">
+                    Back
+                </a>
+            </div>
+        }
+    </div>
+</div>

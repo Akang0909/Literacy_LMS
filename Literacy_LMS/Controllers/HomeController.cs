@@ -36,10 +36,13 @@ namespace Literacy_LMS.Controllers
         return View("Students/Dashboard"); // Ensure this view exists in Views/Home/Students/
     }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Dashboard()
         {
             return View();
         }
+
+
 
         public IActionResult Messages()
         {

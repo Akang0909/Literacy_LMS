@@ -5,14 +5,21 @@
 namespace Literacy_LMS.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddFullNameToUser : Migration
+    public partial class AddColumnIdAndTextbook : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<int>(
+                name: "NumberOfCopies",
+                table: "IssueRequests",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+
             migrationBuilder.AddColumn<string>(
-                name: "FullName",
-                table: "AspNetUsers",
+                name: "Textbook",
+                table: "IssueRequests",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
@@ -22,8 +29,12 @@ namespace Literacy_LMS.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "FullName",
-                table: "AspNetUsers");
+                name: "NumberOfCopies",
+                table: "IssueRequests");
+
+            migrationBuilder.DropColumn(
+                name: "Textbook",
+                table: "IssueRequests");
         }
     }
 }

@@ -25,7 +25,10 @@
             <a href="javascript:history.back()" class="btn btn-primary">
                 Back
             </a>
-            <a href="@Url.Action("Delete", "Book", new { id = Model.BookID })" class="btn btn-secondary">📂 Archive</a>
+            <a href="@Url.Action("Archive", "Book", new { id = Model.BookID })" class="btn btn-secondary">
+                📂 Archive
+            </a>
+
         </div>
     </div>
 </div>

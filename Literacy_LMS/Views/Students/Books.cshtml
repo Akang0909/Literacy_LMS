@@ -21,6 +21,7 @@ else
                     <th>Book ID</th>
                     <th>Book Section</th>
                     <th>Book Name</th>
+                    <th>Availability</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -32,8 +33,18 @@ else
                         <td>@book.BookSection</td>
                         <td>@book.Textbook</td>
                         <td>
+                            @if (book.NumberOfCopies > 1)
+                            {
+                                <span style="color: green; font-weight: bold;">Available</span>
+                            }
+                            else
+                            {
+                                <span style="color: red; font-weight: bold;">Not Available</span>
+                            }
+                        </td>
+                        <td>
                             <a href="@Url.Action("Details", "Students", new { id = book.BookID })" class="btn btn-info">Details</a>
-                            <a href="@Url.Action("Request", "Book", new { id = book.BookID })" class="btn btn-primary">Request</a>
+                            <button class="btn btn-primary request-btn" data-book-id="@book.BookID" data-book-name="@book.Textbook">Request</button>
 
                             @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
                             {
@@ -47,6 +58,11 @@ else
         </table>
     </div>
 }
+
+<!-- Notification -->
+<div id="notification" class="alert alert-success" style="display: none; position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 9999; width: 100%; text-align: center;">
+    Request Sent Successfully!
+</div>
 
 @section Scripts {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -63,6 +79,39 @@ else
                     success: function (data) {
                         // Update the table with the returned HTML
                         $('#bookList').html($(data).find('#bookList').html());
+                    }
+                });
+            });
+
+            // Handle request button click
+            $('.request-btn').click(function () {
+                var bookId = $(this).data('book-id');
+                var bookName = $(this).data('book-name');
+                var studentId = '@User.Identity.Name'; // Assuming you have student ID from the logged-in user
+
+                // Make AJAX call to send request
+                $.ajax({
+                    url: '@Url.Action("RequestBook", "Students")', // Update this to match the action in your StudentsController
+                    type: 'POST',
+                    data: {
+                        bookId: bookId,
+                        studentId: studentId,
+                        textbook: bookName
+                    },
+                    success: function (response) {
+                        // Show notification after successful request
+                        $('#notification').fadeIn().delay(3000).fadeOut();
+
+                        // Reload the book list view
+                        $.ajax({
+                            url: '@Url.Action("Books", "Students")',
+                            success: function (data) {
+                                $('#bookList').html($(data).find('#bookList').html());
+                            }
+                        });
+                    },
+                    error: function () {
+                        alert('Error sending the request.');
                     }
                 });
             });

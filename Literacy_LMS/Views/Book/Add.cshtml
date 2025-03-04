@@ -7,102 +7,122 @@
 <h2>Add Book</h2>
 
 
+<style>
+    .form-control {
+        max-width: 400px; /* Adjust width as needed */
+        width: 100%;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    select.form-control {
+        max-width: 400px;
+    }
+</style>
 
 
-<form id="addBookForm" asp-action="Add" method="post">
-    <div class="form-group">
-        <label for="BookSection">Book Section</label>
-        <select class="form-control" id="BookSection" name="BookSection" required>
-            <option value="">-- Select Book Section --</option>
-            <option value="General Reference">General Reference</option>
-            <option value="Fiction">Fiction</option>
-            <option value="Non-Fiction">Non-Fiction</option>
-            <option value="Science">Science</option>
-            <option value="Mathematics">Mathematics</option>
-            <option value="History">History</option>
-            <option value="Philosophy">Philosophy</option>
-            <option value="Religion">Religion</option>
-            <option value="Arts & Music">Arts & Music</option>
-            <option value="Language & Literature">Language & Literature</option>
-            <option value="Social Sciences">Social Sciences</option>
-            <option value="Technology & Engineering">Technology & Engineering</option>
-            <option value="Medical & Health Sciences">Medical & Health Sciences</option>
-            <option value="Business & Economics">Business & Economics</option>
-            <option value="Psychology & Self-Help">Psychology & Self-Help</option>
-            <option value="Elementary Education">Elementary Education</option>
-            <option value="High School Curriculum">High School Curriculum</option>
-            <option value="College Textbooks">College Textbooks</option>
-            <option value="Engineering & IT">Engineering & IT</option>
-            <option value="Law & Political Science">Law & Political Science</option>
-            <option value="Medical & Nursing Books">Medical & Nursing Books</option>
-            <option value="Computer Science & Programming">Computer Science & Programming</option>
-            <option value="Teacher’s Resources">Teacher’s Resources</option>
-            <option value="Theses & Dissertations">Theses & Dissertations</option>
-            <option value="Reserved Books (Faculty-Use Only)">Reserved Books (Faculty-Use Only)</option>
-            <option value="Reference Materials">Reference Materials</option>
-            <option value="Periodicals & Magazines">Periodicals & Magazines</option>
-            <option value="New Arrivals">New Arrivals</option>
-            <option value="Bestsellers">Bestsellers</option>
-            <option value="Rare Books & Archives">Rare Books & Archives</option>
-        </select>
 
+
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="container p-4 shadow-lg rounded" style="max-width: 600px; background-color: white;">
+        <form id="addBookForm" asp-action="Add" method="post">
+            <div class="form-group">
+                <label for="BookSection">Book Section</label>
+                <select class="form-control" id="BookSection" name="BookSection" required>
+                    <option value="">-- Select Book Section --</option>
+                    <option value="General Reference">General Reference</option>
+                    <option value="Fiction">Fiction</option>
+                    <option value="Non-Fiction">Non-Fiction</option>
+                    <option value="Science">Science</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="History">History</option>
+                    <option value="Philosophy">Philosophy</option>
+                    <option value="Religion">Religion</option>
+                    <option value="Arts & Music">Arts & Music</option>
+                    <option value="Language & Literature">Language & Literature</option>
+                    <option value="Social Sciences">Social Sciences</option>
+                    <option value="Technology & Engineering">Technology & Engineering</option>
+                    <option value="Medical & Health Sciences">Medical & Health Sciences</option>
+                    <option value="Business & Economics">Business & Economics</option>
+                    <option value="Psychology & Self-Help">Psychology & Self-Help</option>
+                    <option value="Elementary Education">Elementary Education</option>
+                    <option value="High School Curriculum">High School Curriculum</option>
+                    <option value="College Textbooks">College Textbooks</option>
+                    <option value="Engineering & IT">Engineering & IT</option>
+                    <option value="Law & Political Science">Law & Political Science</option>
+                    <option value="Medical & Nursing Books">Medical & Nursing Books</option>
+                    <option value="Computer Science & Programming">Computer Science & Programming</option>
+                    <option value="Teacher’s Resources">Teacher’s Resources</option>
+                    <option value="Theses & Dissertations">Theses & Dissertations</option>
+                    <option value="Reserved Books (Faculty-Use Only)">Reserved Books (Faculty-Use Only)</option>
+                    <option value="Reference Materials">Reference Materials</option>
+                    <option value="Periodicals & Magazines">Periodicals & Magazines</option>
+                    <option value="New Arrivals">New Arrivals</option>
+                    <option value="Bestsellers">Bestsellers</option>
+                    <option value="Rare Books & Archives">Rare Books & Archives</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="Subject">Subject</label>
+                <input type="text" class="form-control" id="Subject" name="Subject" value="@Model.Subject"
+                       placeholder="e.g., Mathematics" required />
+            </div>
+
+            <div class="form-group">
+                <label for="Textbook">Textbook</label>
+                <input type="text" class="form-control" id="Textbook" name="Textbook" value="@Model.Textbook"
+                       placeholder="e.g., Algebra for Beginners" required />
+            </div>
+
+            <div class="form-group">
+                <label for="CopyrightYear">Copyright Year</label>
+                <input type="number" class="form-control" id="CopyrightYear" name="CopyrightYear" value="@Model.CopyrightYear"
+                       placeholder="e.g., 2022" required />
+            </div>
+
+            <div class="form-group">
+                <label for="Volume">Volume</label>
+                <input type="number" class="form-control" id="Volume" name="Volume" value="@Model.Volume"
+                       placeholder="e.g., 1" />
+            </div>
+
+            <div class="form-group">
+                <label for="NumberOfCopies">Number of Copies</label>
+                <input type="number" class="form-control" id="NumberOfCopies" name="NumberOfCopies" value="@Model.NumberOfCopies"
+                       placeholder="e.g., 5" required />
+            </div>
+
+            <div class="form-group">
+                <label for="Author">Author</label>
+                <input type="text" class="form-control" id="Author" name="Author" value="@Model.Author"
+                       placeholder="e.g., John Doe" required />
+            </div>
+
+            <div class="form-group">
+                <label for="ISBN">ISBN</label>
+                <input type="text" class="form-control" id="ISBN" name="ISBN" value="@Model.ISBN"
+                       placeholder="e.g., 978-3-16-148410-0" required />
+            </div>
+
+            <div class="form-group">
+                <label for="BookStatus">Book Status</label>
+                <select class="form-control" id="BookStatus" name="BookStatus" required>
+                    <option value="">-- Select Book Status --</option>
+                    <option value="Good">Good</option>
+                    <option value="Damaged">Damaged</option>
+                    <option value="Dilapidated">Dilapidated</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-2 w-100">Add Book</button>
+        </form>
     </div>
+</div>
 
-    <div class="form-group">
-        <label for="Subject">Subject</label>
-        <input type="text" class="form-control" id="Subject" name="Subject" value="@Model.Subject"
-               placeholder="e.g., Mathematics" required />
-    </div>
-
-    <div class="form-group">
-        <label for="Textbook">Textbook</label>
-        <input type="text" class="form-control" id="Textbook" name="Textbook" value="@Model.Textbook"
-               placeholder="e.g., Algebra for Beginners" required />
-    </div>
-
-    <div class="form-group">
-        <label for="CopyrightYear">Copyright Year</label>
-        <input type="number" class="form-control" id="CopyrightYear" name="CopyrightYear" value="@Model.CopyrightYear"
-               placeholder="e.g., 2022" required />
-    </div>
-
-    <div class="form-group">
-        <label for="Volume">Volume</label>
-        <input type="number" class="form-control" id="Volume" name="Volume" value="@Model.Volume"
-               placeholder="e.g., 1" />
-    </div>
-
-    <div class="form-group">
-        <label for="NumberOfCopies">Number of Copies</label>
-        <input type="number" class="form-control" id="NumberOfCopies" name="NumberOfCopies" value="@Model.NumberOfCopies"
-               placeholder="e.g., 5" required />
-    </div>
-
-    <div class="form-group">
-        <label for="Author">Author</label>
-        <input type="text" class="form-control" id="Author" name="Author" value="@Model.Author"
-               placeholder="e.g., John Doe" required />
-    </div>
-
-    <div class="form-group">
-        <label for="ISBN">ISBN</label>
-        <input type="text" class="form-control" id="ISBN" name="ISBN" value="@Model.ISBN"
-               placeholder="e.g., 978-3-16-148410-0" required />
-    </div>
-
-    <div class="form-group">
-        <label for="BookStatus">Book Status</label>
-        <select class="form-control" id="BookStatus" name="BookStatus" required>
-            <option value="">-- Select Book Status --</option>
-            <option value="Good">Good</option>
-            <option value="Damaged">Damaged</option>
-            <option value="Dilapidated">Dilapidated</option>
-        </select>
-
-    </div>
-
-    <button type="submit" class="btn btn-primary mt-2">Add Book</button>
-</form>
 
 <a href="javascript:history.back()" class="btn btn-primary mt-2">
     Back

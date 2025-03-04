@@ -100,30 +100,39 @@
             <i class="fa fa-bars"></i>
         </button>
 
-        <a href="#"><i class="fa fa-home"></i> <span>Home</span></a>
+        <a href="@Url.Action("Dashboard", "Students")"><i class="fa fa-home"></i> <span>Home</span></a>
         <a href="#"><i class="fa fa-envelope"></i> <span>Messages</span></a>
         <a href="@Url.Action("Books", "Students")"><i class="fa fa-book"></i> <span>All Books</span></a>
-        <a href="#"><i class="fa fa-book-open"></i> <span>Previously Borrowed Books</span></a>
-        <a href="#"><i class="fa fa-book"></i> <span>Currently Borrowed Books</span></a>
+        <a href="@Url.Action("Previous", "Students")"><i class="fa fa-book"></i> <span>Previously Borrowed Books</span></a>
+        <a href="@Url.Action("Currently", "Students")"><i class="fa fa-book"></i> <span>Currently Borrowed Books</span></a>
+
     </div>
 
     <!-- Main Content -->
     <div id="content" class="content d-flex justify-content-center mt-5 mb-5">
         <div class="card p-4 shadow-lg rounded" style="width: 400px;">
             <div class="card-body text-center">
-                <h4 class="card-title">Students</h4>
+                <h4 class="card-title">Student</h4>
                 <p class="card-text">
                     <strong>Email:</strong> @User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
                 </p>
+
                 <p class="card-text">
-                    <strong>Contact:</strong> 09203853517
+                    <strong>Student ID:</strong> @ViewBag.StudentIDNumber
                 </p>
+
+                <p class="card-text">
+                    <strong>Phone Number:</strong> @ViewBag.PhoneNumber
+                </p>
+
                 <div class="btn-group w-100 mt-3 gap-2">
                     <!-- Buttons can be added here -->
                 </div>
             </div>
         </div>
     </div>
+
+
 
 
 

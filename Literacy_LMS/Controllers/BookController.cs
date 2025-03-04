@@ -5,6 +5,7 @@ using Literacy_LMS.Models;
 using X.PagedList;
 using X.PagedList.Extensions;
 using Microsoft.CodeAnalysis.Scripting;
+using System.Security.Claims;
 
 namespace Literacy_LMS.Controllers
 {
@@ -157,10 +158,65 @@ namespace Literacy_LMS.Controllers
 
 
         //students view 
-   
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult RequestBook(int bookID, string bookName)
+        {
+            try
+            {
+                // Retrieve the logged-in user's IDNumber from claims
+                var idNumber = User.FindFirstValue("IDNumber");
+
+                if (string.IsNullOrEmpty(idNumber))
+                {
+                    return Json(new { success = false, message = "User not authenticated or IDNumber not found" });
+                }
+
+                // Validate input
+                if (bookID == 0 || string.IsNullOrEmpty(bookName))
+                {
+                    return Json(new { success = false, message = "Invalid input data" });
+                }
+
+                // Create a new book request
+                var request = new IssueRequest
+                {
+                    BookID = bookID,
+                    IDNumber = idNumber,  // Use the IDNumber from the logged-in user
+                    RequestDate = DateTime.Now,
+                    Status = "Requested",
+                    Textbook = bookName, // Assuming this is a string
+                    NumberOfCopies = 1 // Adjust based on your logic
+                };
+
+                // Add to the database
+                _context.IssueRequests.Add(request);
+                _context.SaveChanges();
+
+                return Json(new { success = true, message = "Request sent successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
 
 
-      
+        public IActionResult Archive(int id)
+        {
+            var book = _context.Books.FirstOrDefault(b => b.BookID == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            book.IsArchived = true;
+            _context.SaveChanges();
+
+            return RedirectToAction("Index"); // Redirect to the main book list
+        }
+
+
     }
 }
 

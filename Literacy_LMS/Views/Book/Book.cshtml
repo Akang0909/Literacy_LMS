@@ -17,6 +17,7 @@
 
         <!-- Filtering Options -->
         <div class="row mb-3">
+        <div class="row mb-3">
             <div class="col-md-6">
                 <select name="sectionFilter" id="sectionFilter" class="form-control">
                     <option value="">Select Section</option>
@@ -84,8 +85,7 @@ else
                 </tr>
             </thead>
             <tbody id="bookTableBody">
-
-                @foreach (var book in Model)
+                @foreach (var book in Model.Where(b => !b.IsArchived)) // Only show books that are NOT archived
                 {
                     <tr>
                         <td>@book.BookID</td>
@@ -102,6 +102,7 @@ else
                     </tr>
                 }
             </tbody>
+
         </table>
 
         <!-- Pagination -->

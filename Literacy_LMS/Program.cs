@@ -18,16 +18,20 @@ namespace Literacy_LMS
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             // Identity Configuration
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+                options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            // Session Configuration ✅ FIXED
+            // ✅ Fix: Ensure Razor Pages are registered
+            builder.Services.AddRazorPages();
+
+            // ✅ Session Configuration
             builder.Services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(30); // Auto logout after 30 min inactivity
-                options.Cookie.HttpOnly = true; // Security: Prevent JavaScript access
-                options.Cookie.IsEssential = true; // Allow cookies even if consent is required
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
             });
 
             builder.Services.AddControllersWithViews();
@@ -50,30 +54,36 @@ namespace Literacy_LMS
 
             app.UseRouting();
 
-            app.UseAuthentication(); // Ensure authentication is enabled
+            app.UseAuthentication();
             app.UseAuthorization();
-            app.UseSession(); // ✅ Ensure session is enabled
+            app.UseSession();
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
 
+            // ✅ Ensure roles exist before running the app
             using (var scope = app.Services.CreateScope())
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                var roles = new[] { "Admin", "Librarian", "Student" };
-                foreach (var role in roles)
-                {
-                    if (!await roleManager.RoleExistsAsync(role))
-                    {
-                        await roleManager.CreateAsync(new IdentityRole(role));
-                    }
-
-                }
+                await EnsureRolesExist(roleManager);
             }
 
             app.Run();
+        }
+
+        // ✅ Role Seeding (Ensures roles exist)
+        private static async Task EnsureRolesExist(RoleManager<IdentityRole> roleManager)
+        {
+            var roles = new[] { "Admin", "Librarian", "Student" };
+            foreach (var role in roles)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }
         }
     }
 }

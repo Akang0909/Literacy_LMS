@@ -31,10 +31,16 @@
                 <td>@borrowedBook.Textbook</td>
                 <td>@borrowedBook.RequestDate.ToString("MM/dd/yyyy")</td>
                 <td>@borrowedBook.DueDate.ToString("MM/dd/yyyy")</td>
-                <td>
-                    <button class="btn btn-renew">Renew</button>
-                    <button class="btn btn-return">Return</button>
+                <td style="display: flex; gap: 8px;">
+                <button type="button" class="btn btn-renew" onclick="renewBook('@borrowedBook.RequestID', this)">Renew</button>
+
+                    <form method="post" asp-action="ReturnBook" asp-controller="Library">
+                        <input type="hidden" name="requestId" value="@borrowedBook.RequestID" />
+                        <button type="submit" class="btn btn-return">Return</button>
+                    </form>
                 </td>
+
+
             </tr>
         }
     </tbody>
@@ -121,3 +127,26 @@
             background-color: #c82333;
         }
 </style>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function renewBook(requestId, button) {
+        $.ajax({
+            url: '@Url.Action("RenewRequest", "Home")',
+            type: 'POST',
+            data: { requestId: requestId },
+            success: function(response) {
+                if (response.success) {
+                    alert("Renew Sent");
+                    location.reload(); // Refresh the page
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function() {
+                alert("An error occurred while processing your request.");
+            }
+        });
+    }
+</script>

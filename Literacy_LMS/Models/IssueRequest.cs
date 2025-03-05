@@ -25,4 +25,9 @@ public class IssueRequest
     public decimal? OverdueAmount { get; set; }  // Nullable, calculated when book is returned
 
     public string PaymentStatus { get; set; } = "Unpaid"; // New field
+
+    public int RenewCount { get; set; } = 1;
+
+    public string RenewStatus { get; set; } = "";
+
 }

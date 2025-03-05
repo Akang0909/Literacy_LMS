@@ -179,3 +179,16 @@
         });
     });
 </script>
+
+
+@* script for the top buttons *@
+<script>
+    document.getElementById("btnRenew").addEventListener("click", function () {
+        window.location.href = '@Url.Action("RenewRequest", "Home")';
+    });
+
+    document.getElementById("btnReturn").addEventListener("click", function () {
+        window.location.href = '@Url.Action("ReturnRequest", "Home")';
+    });
+</script>
+

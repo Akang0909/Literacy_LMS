@@ -79,9 +79,14 @@ public class StudentsController : Controller
 
     public IActionResult Previous()
     {
-        
-        return View();
+        var previousBooks = _context.IssueRequests
+            .Where(b => b.ReturnDate != null)  // Books that have been returned
+            .OrderByDescending(b => b.ReturnDate)
+            .ToList();
+
+        return View(previousBooks);
     }
+
 
 
 
@@ -145,28 +150,61 @@ public class StudentsController : Controller
         return Json(new { success = true });
     }
 
-    //new
     public IActionResult Currently(string searchTerm)
-    {
-        var issueRequests = _context.IssueRequests
-            .Join(_context.Books, ir => ir.BookID, b => b.BookID, (ir, b) => new IssueRequest
-            {
-                RequestID = ir.RequestID,
-                BookID = ir.BookID,
-                IDNumber = ir.IDNumber,
-                Status = ir.Status,
-                RequestDate = ir.RequestDate,
-                DueDate = ir.DueDate,
-                Textbook = b.Textbook,
-                NumberOfCopies = b.NumberOfCopies
-            })
-            // Filter to get only accepted requests
-            .Where(ir => ir.Status == "Accepted")
-            .Take(1000)
-            .ToList();
+{
+    // Get the logged-in user's Id from AspNetUsers
+    var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-        return View(issueRequests);
+    if (string.IsNullOrEmpty(userId))
+    {
+        return Unauthorized(); // If no user is found, prevent access
     }
+
+    // Query the Students table where UserId matches the logged-in user's Id
+    var student = _context.Students
+        .FirstOrDefault(s => s.UserId == userId);
+
+    if (student == null)
+    {
+        return NotFound("Student not found");
+    }
+
+    // Get the IDNumber of the current student
+    var idNumber = student.IDNumber;
+
+    // Filter IssueRequests by the current student's IDNumber and status "Accepted"
+    var issueRequests = _context.IssueRequests
+        .Where(ir => ir.IDNumber == idNumber && ir.Status == "Accepted") // Only accepted requests for the current student
+        .Join(_context.Books, ir => ir.BookID, b => b.BookID, (ir, b) => new
+        {
+            ir.RequestID,
+            ir.BookID,
+            ir.IDNumber,
+            ir.Status,
+            ir.RequestDate,
+            ir.DueDate,
+            b.Textbook,
+            b.NumberOfCopies
+        })
+        .Distinct() // Ensure no duplicates
+        .Take(1000)
+        .Select(ir => new IssueRequest
+        {
+            RequestID = ir.RequestID,
+            BookID = ir.BookID,
+            IDNumber = ir.IDNumber,
+            Status = ir.Status,
+            RequestDate = ir.RequestDate,
+            DueDate = ir.DueDate,
+            Textbook = ir.Textbook,
+            NumberOfCopies = ir.NumberOfCopies
+        })
+        .ToList();
+
+    return View(issueRequests);
+}
+
+
 
 
 

@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Literacy_LMS.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -99,6 +99,8 @@ namespace Literacy_LMS.Controllers
 
 
 
+
+
         [HttpPost]
         public IActionResult AcceptRequest(int requestId)
         {
@@ -170,6 +172,94 @@ namespace Literacy_LMS.Controllers
             return Json(new { success = true, message = "Request Rejected", data = remainingRequests });
         }
 
+        //Renewal of book//
+
+        public IActionResult RenewRequest()
+        {
+            var renewRequests = _context.IssueRequests
+                .Where(r => r.Status == "Accepted" && r.RenewStatus == "Pending")
+                .ToList();
+
+            return View(renewRequests);
+        }
+
+
+        [HttpPost]
+        public IActionResult RenewRequest(int requestId)
+        {
+            var request = _context.IssueRequests.FirstOrDefault(r => r.RequestID == requestId);
+
+            if (request == null)
+            {
+                return Json(new { success = false, message = "Request not found." });
+            }
+
+            if (request.RenewCount <= 0)
+            {
+                return Json(new { success = false, message = "Renewal limit reached." });
+            }
+
+            // request.RenewCount--;
+            request.RenewStatus = "Pending";
+            _context.SaveChanges();
+
+            return Json(new { success = true, message = "Renewal successful. New Due Date: " + DateTime.Now.AddDays(3).ToString("yyyy-MM-dd") });
+        }
+
+        [HttpPost]
+        public IActionResult RejectRenewRequest(int requestId)
+        {
+            var request = _context.IssueRequests.FirstOrDefault(r => r.RequestID == requestId);
+
+            if (request == null)
+            {
+                return Json(new { success = false, message = "Request not found." });
+            }
+
+            // Mark request as "Rejected" or any other logic needed
+            request.RenewStatus = "Rejected";
+            _context.SaveChanges();
+
+            return Json(new { success = true, message = "Renewal request rejected successfully." });
+        }
+
+
+        //new
+
+        [HttpPost]
+        public IActionResult AcceptRenewRequest(int requestId)
+        {
+            var request = _context.IssueRequests.FirstOrDefault(r => r.RequestID == requestId);
+
+            if (request == null)
+            {
+                return Json(new { success = false, message = "Request not found." });
+            }
+
+            if (request.RenewCount <= 0)
+            {
+                return Json(new { success = false, message = "Renewal limit reached." });
+            }
+
+            request.RenewCount--;
+            request.RenewStatus = "Accepted";
+            request.DueDate = DateTime.Now.AddDays(3); // Extend due date
+            _context.SaveChanges();
+
+            return Json(new { success = true, message = "Renewal request accepted. New Due Date: " + request.DueDate.ToString("yyyy-MM-dd") });
+        }
+
+
+
+        //end of the renewal of book
+
+
+
+
+
+
+
+
 
 
 
@@ -180,12 +270,18 @@ namespace Literacy_LMS.Controllers
             return View(archivedBooks);
         }
 
-
-
-        public IActionResult RenewRequest()
+        public IActionResult IssuedBooks()
         {
-            return View();
+            var issuedBooks = _context.IssueRequests
+                .Where(b => b.ReturnDate == null)  // Only show books that are not returned
+                .OrderByDescending(b => b.RequestDate)
+                .ToList();
+
+            return View(issuedBooks);
         }
+
+
+        
 
         public IActionResult ReturnRequest()
         {

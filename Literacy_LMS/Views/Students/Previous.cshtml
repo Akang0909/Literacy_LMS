@@ -1,24 +1,56 @@
-﻿@model List<BorrowedBook>
+﻿
 
-<h2>Previously Borrowed Books</h2>
+@{
+    ViewData["Title"] = "Previously";
+}
 
-<table class="table table-bordered">
-    <thead>
+<h2 class="text-center">Previously Borrowed Books</h2>
+
+<table class="table table-striped">
+    <thead class="thead-dark">
         <tr>
             <th>Book ID</th>
-            <th>Book Name</th>
+            <th>Title</th>
+            <th>Student ID</th>
+            <th>Borrower</th>
             <th>Issue Date</th>
             <th>Return Date</th>
+            <th>Overdue (Days)</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var book in Model)
         {
             <tr>
-                <td>@book.BookId</td>
-                <td>@book.BookName</td>
-                <td>@book.IssueDate.ToString("yyyy-MM-dd")</td>
-                <td>@book.ReturnDate?.ToString("yyyy-MM-dd")</td>
+                <td>@book.BookID</td>
+                <td>@book.Textbook</td>
+                <td>@book.IDNumber</td>
+                <td>@book.BorrowerName</td>
+                <td>@book.RequestDate.ToString("yyyy-MM-dd")</td>
+                <td>@(book.ReturnDate?.ToString("yyyy-MM-dd") ?? "Not Returned")</td>
+                <td>
+                    @{
+                        var overdueDays = book.ReturnDate.HasValue && book.ReturnDate > book.DueDate
+                        ? (book.ReturnDate.Value - book.DueDate).Days
+                        : 0;
+                    }
+                    @(overdueDays > 0 ? overdueDays : "-")
+                </td>
+                <td>
+                    @if (book.ReturnDate == null)
+                    {
+                        <span class="badge bg-warning text-dark">Not Returned</span>
+                    }
+                    else if (book.ReturnDate > book.DueDate)
+                    {
+                        <span class="badge bg-danger">Overdue</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Returned</span>
+                    }
+                </td>
             </tr>
         }
     </tbody>

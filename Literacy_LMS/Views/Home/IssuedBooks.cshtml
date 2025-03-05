@@ -1,0 +1,142 @@
+﻿@model List<IssueRequest>
+
+@{
+    ViewData["Title"] = "Currently Issued Books";
+}
+
+<h2><i class="fa fa-book"></i> Currently Issued Books</h2>
+
+<!-- Search Bar -->
+<form method="get" asp-action="CurrentlyIssuedBooks" class="search-form">
+    <input type="text" name="searchTerm" placeholder="Enter Book Name or Book ID" class="search-box" />
+    <button type="submit" class="search-btn">Search</button>
+</form>
+
+<!-- Borrowed Books Table -->
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>Book ID</th>
+            <th>Book Name</th>
+            <th>Student ID</th>
+            @* <th>Borrower</th> *@
+            <th>Issue Date</th>
+            <th>Due Date</th>
+            <th>Return Date</th>
+            <th>Overdue (Days)</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody id="currentlyTableBody">
+        @foreach (var book in Model)
+        {
+            <tr>
+                <td>@book.BookID</td>
+                <td>@book.Textbook</td>
+                <td>@book.IDNumber</td>
+                @* <td>@book.FullName</td> *@
+                <td>@book.RequestDate.ToString("MM/dd/yyyy")</td>
+                <td>@book.DueDate.ToString("MM/dd/yyyy")</td>
+                <td>@(book.ReturnDate?.ToString("MM/dd/yyyy") ?? "Not Returned")</td>
+                <td>
+                    @{
+                        var overdueDays = book.ReturnDate.HasValue && book.ReturnDate > book.DueDate
+                        ? (book.ReturnDate.Value - book.DueDate).Days
+                        : 0;
+                    }
+                    @(overdueDays > 0 ? overdueDays : "-")
+                </td>
+                <td>
+                    @if (book.ReturnDate == null)
+                    {
+                        <span class="badge bg-warning text-dark">Not Returned</span>
+                    }
+                    else if (book.ReturnDate > book.DueDate)
+                    {
+                        <span class="badge bg-danger">Overdue</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Returned</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<style>
+    /* Styling the search form */
+    .search-form {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .search-box {
+        padding: 10px;
+        width: 250px;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .search-btn {
+        padding: 10px 15px;
+        margin-left: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+        .search-btn:hover {
+            background-color: #0056b3;
+        }
+
+    /* Styling the table */
+    .styled-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .styled-table th {
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+        }
+
+        .styled-table tbody tr:hover {
+            background-color: #f4f4f4;
+        }
+
+    /* Styling the status badges */
+    .badge {
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .bg-warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .bg-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .bg-success {
+        background-color: #28a745;
+        color: white;
+    }
+</style>

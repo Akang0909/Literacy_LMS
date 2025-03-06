@@ -26,28 +26,21 @@
     <tbody id="currentlyTableBody">
         @foreach (var borrowedBook in Model)
         {
-            <tr>
+            <tr id="row-@borrowedBook.RequestID">
                 <td>@borrowedBook.BookID</td>
                 <td>@borrowedBook.Textbook</td>
                 <td>@borrowedBook.RequestDate.ToString("MM/dd/yyyy")</td>
                 <td>@borrowedBook.DueDate.ToString("MM/dd/yyyy")</td>
                 <td style="display: flex; gap: 8px;">
-                <button type="button" class="btn btn-renew" onclick="renewBook('@borrowedBook.RequestID', this)">Renew</button>
-
-                    <form method="post" asp-action="ReturnBook" asp-controller="Library">
-                        <input type="hidden" name="requestId" value="@borrowedBook.RequestID" />
-                        <button type="submit" class="btn btn-return">Return</button>
-                    </form>
+                    <button type="button" class="btn btn-renew" onclick="renewBook('@borrowedBook.RequestID', this)">Renew</button>
+                    <button type="button" class="btn btn-return" onclick="returnBook('@borrowedBook.RequestID', this)">Return</button>
                 </td>
-
-
             </tr>
         }
     </tbody>
 </table>
 
 <style>
-    /* Styling the search form */
     .search-form {
         margin-bottom: 20px;
         text-align: center;
@@ -75,7 +68,6 @@
             background-color: #0056b3;
         }
 
-    /* Styling the table */
     .styled-table {
         width: 100%;
         border-collapse: collapse;
@@ -99,7 +91,6 @@
             background-color: #f4f4f4;
         }
 
-    /* Styling the action buttons */
     .btn {
         padding: 6px 12px;
         border: none;
@@ -120,7 +111,6 @@
     .btn-return {
         background-color: #dc3545;
         color: white;
-        margin-left: 5px;
     }
 
         .btn-return:hover {
@@ -129,17 +119,21 @@
 </style>
 
 
+
+<!-- Include Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
     function renewBook(requestId, button) {
         $.ajax({
-            url: '@Url.Action("RenewRequest", "Home")',
+            url: '@Url.Action("RenewRequest", "Home")', // Home controller
             type: 'POST',
             data: { requestId: requestId },
             success: function(response) {
                 if (response.success) {
                     alert("Renew Sent");
-                    location.reload(); // Refresh the page
+                    location.reload();
                 } else {
                     alert(response.message);
                 }
@@ -149,4 +143,29 @@
             }
         });
     }
+
+            function returnBook(requestId, button) {
+        $.ajax({
+            url: '@Url.Action("ReturnBook", "Home")', // Ensures it goes to HomeController
+            type: 'POST',
+            data: { requestId: requestId },
+            success: function(response) {
+                if (response.success) {
+                    // Show the return sent notification as a toast
+                    alert("Return Sent");
+
+                    setTimeout(function() {
+                        location.reload(); // Reload the page after the message
+                    }, 1500); // Wait for 1.5 seconds before reloading the page
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function() {
+                alert("An error occurred while processing your request.");
+            }
+        });
+    }
+
+
 </script>

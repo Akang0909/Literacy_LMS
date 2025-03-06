@@ -257,10 +257,34 @@ namespace Literacy_LMS.Controllers
 
 
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // Return book
+
+        [HttpPost]
+        public IActionResult ReturnBook(int requestId)
+        {
+            var request = _context.IssueRequests.FirstOrDefault(r => r.RequestID == requestId);
+
+            if (request == null)
+            {
+                return Json(new { success = false, message = "Request not found." });
+            }
+
+            request.Status = "Return"; // Updating status to 'Return'
+            request.ReturnDate = DateTime.Now; // Setting the ReturnDate to the current date
+            _context.SaveChanges();
+
+            return Json(new { success = true, message = "Return successful." });
+        }
 
 
 
 
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //end of the return book
 
 
 

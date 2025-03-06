@@ -9,7 +9,6 @@
     <div class="d-flex justify-content-start mb-3">
         <button class="btn btn-primary me-2" id="btnIssue">Issue Request</button>
         <button class="btn btn-warning me-2" id="btnRenew">Renew Request</button>
-        <button class="btn btn-success" id="btnReturn">Return Request</button>
     </div>
 
     <!-- Search Bar -->
@@ -187,8 +186,5 @@
         window.location.href = '@Url.Action("RenewRequest", "Home")';
     });
 
-    document.getElementById("btnReturn").addEventListener("click", function () {
-        window.location.href = '@Url.Action("ReturnRequest", "Home")';
-    });
 </script>
 

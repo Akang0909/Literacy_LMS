@@ -40,13 +40,41 @@ namespace Literacy_LMS.Controllers
     public IActionResult StudentDashboard()
     {
         return View("Students/Dashboard"); // Ensure this view exists in Views/Home/Students/
-    }
+        }
 
         [Authorize(Roles = "Admin")]
         public IActionResult Dashboard()
         {
             return View();
         }
+
+
+        ///new code working
+        public IActionResult Previous()
+        {
+            // Get the issue requests along with the related Book data
+            var previousBooks = _context.IssueRequests
+                .Where(ir => ir.Status == "Return")  // Fetch books that are returned
+                .Join(_context.Books, ir => ir.BookID, b => b.BookID, (ir, b) => new IssueRequest
+                {
+                    RequestID = ir.RequestID,
+                    BookID = ir.BookID,
+                    IDNumber = ir.IDNumber,
+                    Status = ir.Status,
+                    RequestDate = ir.RequestDate,
+                    DueDate = ir.DueDate,
+                    Textbook = b.Textbook,  // Adding Textbook from the Book table
+                    NumberOfCopies = b.NumberOfCopies, // Adding NumberOfCopies from the Book table
+                    ReturnDate = ir.ReturnDate
+                })
+                .ToList();
+
+            // Pass the data directly to the view (no need for ViewModel now)
+            return View(previousBooks);
+        }
+
+        ///end of new code working
+
 
 
 
@@ -271,12 +299,27 @@ namespace Literacy_LMS.Controllers
                 return Json(new { success = false, message = "Request not found." });
             }
 
+            // Find the book being returned using the BookID (or equivalent field in the IssueRequests table)
+            var book = _context.Books.FirstOrDefault(b => b.BookID == request.BookID); // Make sure BookID exists
+
+            if (book == null)
+            {
+                return Json(new { success = false, message = "Book not found." });
+            }
+
+            // Increment the NumberOfCopies of the book by 1
+            book.NumberOfCopies++;
+
+            // Update the status of the request and the return date
             request.Status = "Return"; // Updating status to 'Return'
             request.ReturnDate = DateTime.Now; // Setting the ReturnDate to the current date
+
+            // Save changes to the database
             _context.SaveChanges();
 
-            return Json(new { success = true, message = "Return successful." });
+            return Json(new { success = true, message = "Return successful. Number of copies updated." });
         }
+
 
 
 
@@ -297,10 +340,22 @@ namespace Literacy_LMS.Controllers
         public IActionResult IssuedBooks()
         {
             var issuedBooks = _context.IssueRequests
-                .Where(b => b.ReturnDate == null)  // Only show books that are not returned
-                .OrderByDescending(b => b.RequestDate)
-                .ToList();
+                 .Where(ir => ir.Status == "Return")  // Fetch books that are returned
+                 .Join(_context.Books, ir => ir.BookID, b => b.BookID, (ir, b) => new IssueRequest
+                 {
+                     RequestID = ir.RequestID,
+                     BookID = ir.BookID,
+                     IDNumber = ir.IDNumber,
+                     Status = ir.Status,
+                     RequestDate = ir.RequestDate,
+                     DueDate = ir.DueDate,
+                     Textbook = b.Textbook,  // Adding Textbook from the Book table
+                     NumberOfCopies = b.NumberOfCopies, // Adding NumberOfCopies from the Book table
+                     ReturnDate = ir.ReturnDate
+                 })
+                 .ToList();
 
+            // Pass the data directly to the view (no need for ViewModel now)
             return View(issuedBooks);
         }
 

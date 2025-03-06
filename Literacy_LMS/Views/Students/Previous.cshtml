@@ -1,7 +1,7 @@
-﻿
+﻿@model IEnumerable<IssueRequest>
 
 @{
-    ViewData["Title"] = "Previously";
+    ViewData["Title"] = "Previous";
 }
 
 <h2 class="text-center">Previously Borrowed Books</h2>
@@ -12,7 +12,6 @@
             <th>Book ID</th>
             <th>Title</th>
             <th>Student ID</th>
-            <th>Borrower</th>
             <th>Issue Date</th>
             <th>Return Date</th>
             <th>Overdue (Days)</th>
@@ -26,7 +25,6 @@
                 <td>@book.BookID</td>
                 <td>@book.Textbook</td>
                 <td>@book.IDNumber</td>
-                <td>@book.BorrowerName</td>
                 <td>@book.RequestDate.ToString("yyyy-MM-dd")</td>
                 <td>@(book.ReturnDate?.ToString("yyyy-MM-dd") ?? "Not Returned")</td>
                 <td>

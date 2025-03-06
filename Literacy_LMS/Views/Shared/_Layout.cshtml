@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Literacy_LMS</title>
+    <title>@ViewData["Title"] - Literacy LMS</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Literacy_LMS.styles.css" asp-append-version="true" />
@@ -17,7 +17,7 @@
                    asp-area=""
                    asp-controller="@((User.IsInRole("Student")) ? "Students" : "Home")"
                    asp-action="@((User.IsInRole("Student")) ? "Dashboard" : "Dashboard")">
-                    Literacy_LMS
+                    Literacy LMS
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"

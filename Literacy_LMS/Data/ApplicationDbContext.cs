@@ -20,7 +20,7 @@ namespace Literacy_LMS.Data
         public DbSet<BorrowedBook> BorrowedBooks { get; set; }
 
 
-
+        public DbSet<Payment> Payments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

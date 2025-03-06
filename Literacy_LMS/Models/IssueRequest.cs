@@ -24,7 +24,7 @@ public class IssueRequest
     [Column(TypeName = "decimal(10,2)")]
     public decimal? OverdueAmount { get; set; }  // Nullable, calculated when book is returned
 
-    public string PaymentStatus { get; set; } = "Unpaid"; // New field
+    public string PaymentStatus { get; set; } = ""; // New field
 
     public int RenewCount { get; set; } = 1;
 

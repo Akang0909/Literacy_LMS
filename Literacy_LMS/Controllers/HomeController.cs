@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Literacy_LMS.Data;
+using Microsoft.IdentityModel.Tokens;
 
 
 namespace Literacy_LMS.Controllers
@@ -48,6 +49,8 @@ namespace Literacy_LMS.Controllers
             return View();
         }
 
+      
+
 
         ///new code working
         public IActionResult Previous()
@@ -82,6 +85,99 @@ namespace Literacy_LMS.Controllers
         {
             return View();
         }
+
+
+        //PAYMENT
+        public IActionResult Payment()
+        {
+            return View();
+        }
+
+
+        public IActionResult ProcessPayment([FromBody] Payment model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                return Json(new { success = false, message = "Invalid input.", errors });
+            }
+
+            var student = _context.Students.FirstOrDefault(s => s.IDNumber == model.IDNumber);
+            if (student == null)
+            {
+                return Json(new { success = false, message = "Student not found." });
+            }
+
+            var issueRequest = _context.IssueRequests
+                .FirstOrDefault(r => r.IDNumber == model.IDNumber && r.BookID == model.BookID);
+
+            if (issueRequest == null)
+            {
+                return Json(new { success = false, message = "Issue request not found for this student and book." });
+            }
+
+            Console.WriteLine($"Before Update: ID: {issueRequest.RequestID}, PaymentStatus: {issueRequest.PaymentStatus}, OverdueAmount: {issueRequest.OverdueAmount}");
+
+            if (issueRequest.OverdueAmount > 0)
+            {
+                decimal remainingAmount = issueRequest.OverdueAmount ?? 0;
+
+                if (model.AmountPaid >= remainingAmount)
+                {
+                    issueRequest.PaymentStatus = "Paid";
+                    issueRequest.OverdueAmount = 0;  // Overdue is fully paid
+                }
+                else
+                {
+                    issueRequest.OverdueAmount = remainingAmount - model.AmountPaid; // Reduce the remaining balance
+                    issueRequest.PaymentStatus = "Partial"; // Mark as partially paid
+                }
+
+
+                _context.Entry(issueRequest).State = EntityState.Modified;
+            }
+            else
+            {
+                return Json(new { success = false, message = "No overdue amount to pay." });
+            }
+
+            // Save the payment record
+            var payment = new Payment
+            {
+                IDNumber = model.IDNumber,
+                BookID = model.BookID,
+                AmountPaid = model.AmountPaid,
+                PaymentMethod = model.PaymentMethod,
+                PaymentDate = DateTime.Now,
+                Remarks = model.Remarks ?? (issueRequest.OverdueAmount == 0 ? "Paid in full" : "Partial payment")
+            };
+
+            try
+            {
+                _context.Payments.Add(payment);
+                _context.SaveChanges();
+
+                Console.WriteLine($"Payment saved successfully. Updated OverdueAmount: {issueRequest.OverdueAmount}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving payment: {ex.Message}");
+                return Json(new { success = false, message = "An error occurred while saving the payment: " + ex.Message });
+            }
+
+            return Json(new { success = true, message = "Payment processed successfully!" });
+        }
+
+
+
+
+
+
+
+        //END OF PAYMENT
+
+
+
 
         public IActionResult Details()
         {
@@ -342,30 +438,65 @@ namespace Literacy_LMS.Controllers
             return View(archivedBooks);
         }
 
+
+        //WORK ISSUED BOOKS
+       
+
         public IActionResult IssuedBooks()
         {
             var issuedBooks = _context.IssueRequests
-                 .Where(ir => ir.Status == "Return")  // Fetch books that are returned
-                 .Join(_context.Books, ir => ir.BookID, b => b.BookID, (ir, b) => new IssueRequest
-                 {
-                     RequestID = ir.RequestID,
-                     BookID = ir.BookID,
-                     IDNumber = ir.IDNumber,
-                     Status = ir.Status,
-                     RequestDate = ir.RequestDate,
-                     DueDate = ir.DueDate,
-                     Textbook = b.Textbook,  // Adding Textbook from the Book table
-                     NumberOfCopies = b.NumberOfCopies, // Adding NumberOfCopies from the Book table
-                     ReturnDate = ir.ReturnDate
-                 })
-                 .ToList();
+                .Where(ir => ir.Status == "Return")  // Fetch books that are returned
+                .Join(_context.Books, ir => ir.BookID, b => b.BookID, (ir, b) => new
+                {
+                    IssueRequest = ir,
+                    Book = b
+                })
+                .ToList();
 
-            // Pass the data directly to the view (no need for ViewModel now)
-            return View(issuedBooks);
+            foreach (var entry in issuedBooks)
+            {
+                var issueRequest = entry.IssueRequest;
+                var book = entry.Book;
+
+                if (issueRequest.ReturnDate.HasValue && issueRequest.ReturnDate > issueRequest.DueDate)
+                {
+                    int overdueDays = (issueRequest.ReturnDate.Value - issueRequest.DueDate).Days;
+                    decimal overdueAmount = overdueDays * 10; // Assuming fine is ₱10 per day
+
+                    // Update the OverdueAmount in the database
+                    issueRequest.OverdueAmount = overdueAmount;
+                    _context.Entry(issueRequest).State = EntityState.Modified;
+                }
+                else
+                {
+                    issueRequest.OverdueAmount = 0; // No overdue, set amount to 0
+                    _context.Entry(issueRequest).State = EntityState.Modified;
+                }
+            }
+
+            _context.SaveChanges(); // Persist changes
+
+            // Pass the updated data to the view
+            var viewModel = issuedBooks.Select(entry => new IssueRequest
+            {
+                RequestID = entry.IssueRequest.RequestID,
+                BookID = entry.IssueRequest.BookID,
+                IDNumber = entry.IssueRequest.IDNumber,
+                Status = entry.IssueRequest.Status,
+                RequestDate = entry.IssueRequest.RequestDate,
+                DueDate = entry.IssueRequest.DueDate,
+                Textbook = entry.Book.Textbook,
+                NumberOfCopies = entry.Book.NumberOfCopies,
+                ReturnDate = entry.IssueRequest.ReturnDate,
+                OverdueAmount = entry.IssueRequest.OverdueAmount,
+                 PaymentStatus = entry.IssueRequest.PaymentStatus
+            }).ToList();
+
+            return View(viewModel);
         }
 
 
-        
+        //WORK ISSUED BOOKS  
 
         public IActionResult ReturnRequest()
         {
@@ -387,10 +518,13 @@ namespace Literacy_LMS.Controllers
             return View();
         }
 
+
         public IActionResult Privacy()
         {
             return View();
         }
+
+        
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

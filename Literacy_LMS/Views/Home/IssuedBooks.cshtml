@@ -25,6 +25,7 @@
             <th>Overdue (Days)</th>
             <th>Overdue Amount</th>
             <th>Status</th>
+            <th>Payment Status</th>
         </tr>
     </thead>
     <tbody id="currentlyTableBody">
@@ -63,6 +64,21 @@
                     else
                     {
                         <span class="badge bg-success">Returned</span>
+                    }
+                </td>
+
+                <td>
+                    @if (book.PaymentStatus == "Paid")
+                    {
+                        <span class="badge bg-success">Paid</span>
+                    }
+                    else if (book.PaymentStatus == "Partial")
+                    {
+                        <span class="badge bg-warning text-dark">Partially Paid</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Not Paid</span>
                     }
                 </td>
             </tr>

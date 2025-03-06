@@ -105,7 +105,8 @@ namespace Literacy_LMS.Controllers
         }
         public IActionResult IssueRequest()
         {
-            // Get the issue requests along with the related Book data
+            decimal finePerDay = 5; // Set your fine per day here
+
             var issueRequests = _context.IssueRequests
                 .Join(_context.Books, ir => ir.BookID, b => b.BookID, (ir, b) => new IssueRequest
                 {
@@ -114,16 +115,20 @@ namespace Literacy_LMS.Controllers
                     IDNumber = ir.IDNumber,
                     Status = ir.Status,
                     RequestDate = ir.RequestDate,
-                    DueDate = ir.DueDate,  // Ensure that DueDate is included
+                    DueDate = ir.DueDate,
+                    ReturnDate = ir.ReturnDate,
                     Textbook = b.Textbook,
-                    NumberOfCopies = b.NumberOfCopies
+                    NumberOfCopies = b.NumberOfCopies,
+                    OverdueAmount = (ir.ReturnDate.HasValue && ir.ReturnDate > ir.DueDate)
+                        ? (ir.ReturnDate.Value - ir.DueDate).Days * finePerDay
+                        : 0 // No fine if returned on time
                 })
                 .Take(1000)
                 .ToList();
 
-            // Pass the data directly to the view (no need for a ViewModel now)
             return View(issueRequests);
         }
+
 
 
 

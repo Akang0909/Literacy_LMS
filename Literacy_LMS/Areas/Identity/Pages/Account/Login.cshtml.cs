@@ -70,9 +70,59 @@ namespace Literacy_LMS.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
         }
 
+        //public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        //{
+        //    returnUrl ??= Url.Content("~");
+
+        //    ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        var user = await _userManager.FindByEmailAsync(Input.Email);
+        //        if (user != null)
+        //        {
+        //            var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        //            if (result.Succeeded)
+        //            {
+        //                _logger.LogInformation("User logged in.");
+
+        //                var roles = await _userManager.GetRolesAsync(user);
+        //                if (roles.Contains("Admin"))
+        //                {
+        //                    return LocalRedirect("~/Home/Dashboard");
+        //                }
+        //                else if (roles.Contains("Librarian"))
+        //                {
+        //                    return LocalRedirect("~/Admin/Dashboard");
+        //                }
+        //                else if (roles.Contains("Student"))
+        //                {
+        //                    return LocalRedirect("~/Students/Dashboard");
+        //                }
+        //                else
+        //                {
+        //                    return LocalRedirect("~/Home/Index");
+        //                }
+        //            }
+        //            if (result.RequiresTwoFactor)
+        //            {
+        //                return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+        //            }
+        //            if (result.IsLockedOut)
+        //            {
+        //                _logger.LogWarning("User account locked out.");
+        //                return RedirectToPage("./Lockout");
+        //            }
+        //        }
+        //        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+        //    }
+        //    return Page();
+        //}
+
+        //new
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~");
+            returnUrl ??= Url.Content("~/");
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
@@ -89,23 +139,25 @@ namespace Literacy_LMS.Areas.Identity.Pages.Account
                         var roles = await _userManager.GetRolesAsync(user);
                         if (roles.Contains("Admin"))
                         {
-                            return LocalRedirect("~/Home/Dashboard");
+                            return RedirectToAction("Dashboard", "Home"); // Ensure this matches your controller and action
                         }
                         else if (roles.Contains("Librarian"))
                         {
-                            return LocalRedirect("~/Admin/Dashboard");
+                            return RedirectToAction("Dashboard", "Admin");
                         }
                         else if (roles.Contains("Student"))
                         {
-                            return LocalRedirect("~/Students/Dashboard");
+                            return RedirectToAction("Dashboard", "Students");
                         }
                         else
                         {
-                            return LocalRedirect("~/Home/Index");
+                            return RedirectToAction("Index", "Home");
                         }
+
                     }
                     if (result.RequiresTwoFactor)
                     {
+                        // Redirect to 2FA page with the appropriate ReturnUrl and RememberMe state
                         return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
                     }
                     if (result.IsLockedOut)
@@ -118,5 +170,6 @@ namespace Literacy_LMS.Areas.Identity.Pages.Account
             }
             return Page();
         }
+
     }
 }

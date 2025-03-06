@@ -19,11 +19,11 @@
             <th>Book ID</th>
             <th>Book Name</th>
             <th>Student ID</th>
-            @* <th>Borrower</th> *@
             <th>Issue Date</th>
             <th>Due Date</th>
             <th>Return Date</th>
             <th>Overdue (Days)</th>
+            <th>Overdue Amount</th>
             <th>Status</th>
         </tr>
     </thead>
@@ -34,7 +34,6 @@
                 <td>@book.BookID</td>
                 <td>@book.Textbook</td>
                 <td>@book.IDNumber</td>
-                @* <td>@book.FullName</td> *@
                 <td>@book.RequestDate.ToString("MM/dd/yyyy")</td>
                 <td>@book.DueDate.ToString("MM/dd/yyyy")</td>
                 <td>@(book.ReturnDate?.ToString("MM/dd/yyyy") ?? "Not Returned")</td>
@@ -45,6 +44,12 @@
                         : 0;
                     }
                     @(overdueDays > 0 ? overdueDays : "-")
+                </td>
+                <td>
+                    @{
+                        var overdueAmount = overdueDays > 0 ? overdueDays * 10 : 0; // Assuming 10 is the fine per day
+                    }
+                    @(overdueAmount > 0 ? $"₱{overdueAmount}" : "-")
                 </td>
                 <td>
                     @if (book.ReturnDate == null)

@@ -87,11 +87,16 @@ namespace Literacy_LMS.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Save the book to the database
                 _context.Books.Add(book);
                 _context.SaveChanges();
-                return RedirectToAction(nameof(Index)); // Redirect to book list
+
+                // Return a JSON response
+                return Json(new { success = true, message = "Book added successfully!" });
             }
-            return View(book);
+
+            // If model validation fails, return error
+            return Json(new { success = false, message = "Failed to add book. Please check the input fields." });
         }
 
         // Book List with Pagination

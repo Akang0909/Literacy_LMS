@@ -1,0 +1,102 @@
+﻿@model IEnumerable<Literacy_LMS.Models.Payment>
+
+@{
+    ViewData["Title"] = "Transactions";
+}
+
+<h2>Payment Transactions</h2>
+
+<a href="@Url.Action("ExportToPDF", "Home")" class="btn btn-danger">Download PDF</a>
+
+<!-- Search & Filter -->
+<form method="get" class="mb-3">
+    <input type="text" name="search" class="form-control mb-2" placeholder="Search by ID Number or Payment Method">
+    <select name="statusFilter" class="form-control mb-2">
+        <option value="">All Status</option>
+        <option value="Paid">Paid</option>
+        <option value="Unpaid">Unpaid</option>
+        <option value="Partially Paid">Partially Paid</option>
+    </select>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<!-- Transactions Table -->
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Payment ID</th>
+            <th>Student ID</th>
+            <th>Book ID</th>
+            <th>Amount Paid</th>
+            <th>Payment Method</th>
+            <th>Date</th>
+            <th>Remarks</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.PaymentId</td>
+                <td>@item.IDNumber</td>
+                <td>@(item.BookID == 0 ? "N/A" : item.BookID.ToString())</td>
+                <td>@item.AmountPaid.ToString("C")</td>
+                <td>@item.PaymentMethod</td>
+                <td>@item.PaymentDate.ToShortDateString()</td>
+                <td>
+                    <span class="badge @(item.Remarks == "Paid" ? "bg-success" : (item.Remarks == "Partially Paid" ? "bg-warning" : "bg-danger"))">
+                        @item.Remarks
+                    </span>
+                </td>
+                <td>
+                    <button class="btn btn-info btn-sm view-receipt" data-id="@item.PaymentId">View Receipt</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Receipt Modal -->
+<div class="modal fade" id="receiptModal" tabindex="-1" aria-labelledby="receiptModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Payment Receipt</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="receiptContent">
+                <!-- Receipt details will be loaded here via AJAX -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="printReceipt">Print</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery & Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".view-receipt").click(function () {
+            var paymentId = $(this).data("id");
+
+            $.get("/Home/GetReceipt/" + paymentId, function (data) {
+                $("#receiptContent").html(data);
+                $("#receiptModal").modal("show");
+            });
+        });
+
+        $("#printReceipt").click(function () {
+            var printContents = document.getElementById("receiptContent").innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            location.reload();
+        });
+    });
+</script>

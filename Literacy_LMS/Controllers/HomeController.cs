@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Literacy_LMS.Data;
 using Microsoft.IdentityModel.Tokens;
+using iTextSharp.text.pdf;
+using iTextSharp.text;
 
 
 namespace Literacy_LMS.Controllers
@@ -176,8 +178,94 @@ namespace Literacy_LMS.Controllers
 
         //END OF PAYMENT
 
+        ///////////////Transactions/////////////////
+        public async Task<IActionResult> Transactions(string search, string statusFilter)
+        {
+            var payments = _context.Payments.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                payments = payments.Where(p => p.IDNumber.Contains(search) || p.PaymentMethod.Contains(search));
+            }
+
+            if (!string.IsNullOrEmpty(statusFilter))
+            {
+                payments = payments.Where(p => p.Remarks == statusFilter);
+            }
+
+            return View(await payments.ToListAsync());
+        }
+
+        [HttpGet]
+        public IActionResult GetReceipt(int id)
+        {
+            var payment = _context.Payments.FirstOrDefault(m => m.PaymentId == id);
+
+            if (payment == null)
+            {
+                return NotFound();
+            }
+
+            return PartialView("_ReceiptPartial", payment);
+        }
+
+        //pdf
+        public ActionResult ExportToPDF()
+        {
+            var payments = _context.Payments.ToList(); // Fetch all data
+
+            // Create a memory stream for PDF
+            MemoryStream stream = new MemoryStream();
+            Document document = new Document(PageSize.A4, 10, 10, 10, 10);
+            PdfWriter writer = PdfWriter.GetInstance(document, stream);
+
+            document.Open();
+
+            // Add Title
+            Font titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18);
+            Paragraph title = new Paragraph("Payment Transactions", titleFont);
+            title.Alignment = Element.ALIGN_CENTER;
+            document.Add(title);
+            document.Add(new Paragraph("\n")); // Line break
+
+            // Create Table
+            PdfPTable table = new PdfPTable(7); // 7 columns for your table
+            table.WidthPercentage = 100;
+            table.SetWidths(new float[] { 15, 20, 15, 15, 15, 15, 20 });
+
+            // Add Table Headers
+            string[] headers = { "Payment ID", "Student ID", "Book ID", "Amount Paid", "Payment Method", "Date", "Remarks" };
+            foreach (var header in headers)
+            {
+                PdfPCell cell = new PdfPCell(new Phrase(header, FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12)))
+                {
+                    BackgroundColor = new BaseColor(200, 200, 200),
+                    HorizontalAlignment = Element.ALIGN_CENTER
+                };
+                table.AddCell(cell);
+            }
+
+            // Add Data Rows
+            foreach (var payment in payments)
+            {
+                table.AddCell(payment.PaymentId.ToString());
+                table.AddCell(payment.IDNumber);
+                table.AddCell(payment.BookID == 0 ? "N/A" : payment.BookID.ToString());
+                table.AddCell(payment.AmountPaid.ToString("C"));
+                table.AddCell(payment.PaymentMethod);
+                table.AddCell(payment.PaymentDate.ToShortDateString());
+                table.AddCell(payment.Remarks);
+            }
+
+            document.Add(table);
+            document.Close();
+
+            // Return the PDF as a file download
+            return File(stream.ToArray(), "application/pdf", "Payment_Transactions.pdf");
+        }
 
 
+        //////////////Transactions///////////////////
 
         public IActionResult Details()
         {
@@ -274,7 +362,6 @@ namespace Literacy_LMS.Controllers
 
             return Json(new { success = true, message = "Request Accepted and book copy deducted", data = acceptedRequests });
         }
-
 
 
         [HttpPost]

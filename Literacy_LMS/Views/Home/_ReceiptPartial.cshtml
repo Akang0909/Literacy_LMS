@@ -1,0 +1,12 @@
+﻿@model Literacy_LMS.Models.Payment
+
+<div class="p-3 border rounded">
+    <h4 class="text-center">Library Payment Receipt</h4>
+    <hr>
+    <p><strong>Student ID:</strong> @Model.IDNumber</p>
+    <p><strong>Book ID:</strong> @(Model.BookID == 0 ? "N/A" : Model.BookID.ToString())</p>
+    <p><strong>Amount Paid:</strong> @Model.AmountPaid.ToString("C")</p>
+    <p><strong>Payment Method:</strong> @Model.PaymentMethod</p>
+    <p><strong>Date of Payment:</strong> @Model.PaymentDate.ToString("MMMM dd, yyyy")</p>
+    <p><strong>Remarks:</strong> @Model.Remarks</p>
+</div>

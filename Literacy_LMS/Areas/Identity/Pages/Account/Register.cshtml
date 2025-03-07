@@ -95,4 +95,17 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+}
+
+<script>
+    document.addEventListener("click", function(event) {
+        let loginContainer = document.querySelector(".card");
+
+        if (!loginContainer.contains(event.target)) {
+            window.location.href = "/Home/Dashboard"; // Redirect to Dashboard instead of Index
+        }
+    });
+</script>
+
 }

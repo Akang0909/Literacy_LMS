@@ -60,23 +60,27 @@ namespace Literacy_LMS.Controllers
         {
             if (string.IsNullOrEmpty(recipientEmail))
             {
-                return Content("Error: Recipient email is required.");
+                TempData["ErrorMessage"] = "Error: Recipient email is required.";
+                return RedirectToAction("SendEmail");
             }
 
             if (!IsValidEmail(recipientEmail))
             {
-                return Content("Error: Invalid email format.");
+                TempData["ErrorMessage"] = "Error: Invalid email format.";
+                return RedirectToAction("SendEmail");
             }
 
             try
             {
                 await EmailService.SendEmailAsync(recipientEmail, "📢 Test Email", "This is a test email from your Library System.");
-                return Content($"Test email sent to {recipientEmail}!");
+                TempData["Message"] = $"✅ Test email sent to {recipientEmail}!";
             }
             catch (Exception ex)
             {
-                return Content($"Error sending email: {ex.Message}");
+                TempData["ErrorMessage"] = $"❌ Error sending email: {ex.Message}";
             }
+
+            return RedirectToAction("SendEmail");
         }
 
         [HttpGet]
@@ -90,29 +94,27 @@ namespace Literacy_LMS.Controllers
         {
             if (string.IsNullOrEmpty(model.ToEmail))
             {
-                ModelState.AddModelError("ToEmail", "Recipient email is required.");
-            }
-            else if (!IsValidEmail(model.ToEmail))
-            {
-                ModelState.AddModelError("ToEmail", "Invalid email format.");
+                TempData["ErrorMessage"] = "Recipient email is required.";
+                return RedirectToAction("SendEmail");
             }
 
-            if (!ModelState.IsValid)
+            if (!IsValidEmail(model.ToEmail))
             {
-                return View("Messages", model);
+                TempData["ErrorMessage"] = "Invalid email format.";
+                return RedirectToAction("SendEmail");
             }
 
             try
             {
                 await EmailService.SendEmailAsync(model.ToEmail, model.Subject, model.Message);
-                ViewBag.Message = "Email sent successfully!";
+                TempData["Message"] = "✅ Email sent successfully!";
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, $"Error sending email: {ex.Message}");
+                TempData["ErrorMessage"] = $"❌ Error sending email: {ex.Message}";
             }
 
-            return View("Messages", model);
+            return RedirectToAction("SendEmail");
         }
 
         // Email validation helper function

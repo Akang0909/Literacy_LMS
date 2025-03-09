@@ -9,6 +9,19 @@
     <link rel="stylesheet" href="~/Literacy_LMS.styles.css" asp-append-version="true" />
 </head>
 
+<style>
+    .container-fluid {
+        padding: 2; /* Optional: Remove any padding inside the container */
+    }
+
+    main {
+        width: 100%;
+        padding: 0;
+        margin: 0;/* Optional: Remove any padding inside the main element */
+    }
+
+</style>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
@@ -34,15 +47,15 @@
         </nav>
     </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
+    <div class="container-fluid">
+        <main role="main">
             @RenderBody()
         </main>
     </div>
 
     <footer class="border-top footer text-muted text-center py-3">
         <div class="container">
-            &copy; 2025 - Literacy_LMS -
+            &copy; 2025 - Literacy LMS -
             <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>

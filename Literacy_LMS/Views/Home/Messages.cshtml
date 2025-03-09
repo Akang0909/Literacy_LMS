@@ -8,8 +8,16 @@
         <div class="card-body">
             @if (TempData["Message"] != null)
             {
-                <div class="alert alert-success">
-                    @TempData["Message"]
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fa fa-check-circle"></i> @TempData["Message"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fa fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
 
@@ -38,3 +46,14 @@
         </div>
     </div>
 </div>
+
+<!-- Auto-dismiss alert after 5 seconds -->
+<script>
+    setTimeout(function () {
+        let alert = document.querySelector(".alert");
+        if (alert) {
+            alert.classList.remove("show");
+            alert.classList.add("fade");
+        }
+    }, 5000);
+</script>

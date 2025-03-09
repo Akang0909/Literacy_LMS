@@ -58,68 +58,93 @@
 </div>
 
 <!-- AJAX for Live Search -->
-<script> 
+<!-- Toast Notification Container -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="notificationToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="toastMessage">
+                Request processed successfully.
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<script>
     $(document).ready(function () {
-    $("#searchBar").on("keyup", function () {
-        var query = $(this).val();
-        $.ajax({
-            url: '@Url.Action("SearchBooks", "Library")',
-            type: "GET",
-            data: { searchTerm: query },
-            success: function (data) {
-                $("#tableBody").html(data);
+        function showToast(message, isError = false) {
+            var toast = $("#notificationToast");
+            $("#toastMessage").text(message);
+
+            if (isError) {
+                toast.removeClass("bg-success").addClass("bg-danger");
+            } else {
+                toast.removeClass("bg-danger").addClass("bg-success");
+            }
+
+            var toastInstance = new bootstrap.Toast(toast[0]);
+            toastInstance.show();
+        }
+
+        $("#searchBar").on("keyup", function () {
+            var query = $(this).val();
+            $.ajax({
+                url: '@Url.Action("SearchBooks", "Library")',
+                type: "GET",
+                data: { searchTerm: query },
+                success: function (data) {
+                    $("#tableBody").html(data);
+                }
+            });
+        });
+
+        // Handle Renew Request
+        $(document).on("click", ".btn-renew", function () {
+            var requestId = $(this).data("requestid");
+
+            if (confirm("Are you sure you want to renew this book?")) {
+                $.ajax({
+                    url: '@Url.Action("AcceptRenewRequest", "Home")',
+                    type: "POST",
+                    data: { requestId: requestId },
+                    success: function (response) {
+                        showToast(response.message, !response.success);
+                        if (response.success) {
+                            location.reload();
+                        }
+                    },
+                    error: function () {
+                        showToast("❌ An error occurred while processing your request.", true);
+                    }
+                });
+            }
+        });
+
+        // Handle Reject Request
+        $(document).on("click", ".btn-reject", function () {
+            var requestId = $(this).data("requestid");
+
+            if (confirm("Are you sure you want to reject this renewal request?")) {
+                $.ajax({
+                    url: '@Url.Action("RejectRenewRequest", "Home")',
+                    type: "POST",
+                    data: { requestId: requestId },
+                    success: function (response) {
+                        showToast(response.message, !response.success);
+                        if (response.success) {
+                            location.reload();
+                        }
+                    },
+                    error: function () {
+                        showToast("❌ An error occurred while processing your request.", true);
+                    }
+                });
             }
         });
     });
 
-    // Handle Renew Request with event delegation
-    $(document).on("click", ".btn-renew", function () {
-        var requestId = $(this).data("requestid");
-
-        if (confirm("Are you sure you want to renew this book?")) {
-            $.ajax({
-                url: '@Url.Action("AcceptRenewRequest", "Home")',
-                type: "POST",
-                data: { requestId: requestId },
-                success: function (response) {
-                    alert(response.message);
-                    if (response.success) {
-                        location.reload();
-                    }
-                },
-                error: function () {
-                    alert("An error occurred while processing your request.");
-                }
-            });
-        }
-    });
-
-    // Handle Reject Request with event delegation
-    $(document).on("click", ".btn-reject", function () {
-        var requestId = $(this).data("requestid");
-
-        if (confirm("Are you sure you want to reject this renewal request?")) {
-            $.ajax({
-                url: '@Url.Action("RejectRenewRequest", "Home")',
-                type: "POST",
-                data: { requestId: requestId },
-                success: function (response) {
-                    alert(response.message);
-                    if (response.success) {
-                        location.reload();
-                    }
-                },
-                error: function () {
-                    alert("An error occurred while processing your request.");
-                }
-            });
-        }
-    });
-});
-
-
     function navigateTo(page) {
         window.location.href = "/Home/" + page;
     }
-    
 </script>
+

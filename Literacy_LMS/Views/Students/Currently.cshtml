@@ -124,48 +124,74 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<!-- Bootstrap Toast Container -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="notificationToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="toastMessage"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
 <script>
+    function showNotification(message, isSuccess = true) {
+        var toastEl = document.getElementById('notificationToast');
+        var toastMessage = document.getElementById('toastMessage');
+
+        // Set the message
+        toastMessage.innerText = message;
+
+        // Change background color based on success or error
+        if (isSuccess) {
+            toastEl.classList.add("bg-success");
+            toastEl.classList.remove("bg-danger");
+        } else {
+            toastEl.classList.add("bg-danger");
+            toastEl.classList.remove("bg-success");
+        }
+
+        // Show the toast
+        var toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    }
+
     function renewBook(requestId, button) {
         $.ajax({
-            url: '@Url.Action("RenewRequest", "Home")', // Home controller
+            url: '@Url.Action("RenewRequest", "Home")',
             type: 'POST',
             data: { requestId: requestId },
             success: function(response) {
                 if (response.success) {
-                    alert("Renew Sent");
-                    location.reload();
+                    showNotification("Renew request sent successfully.");
+                    setTimeout(() => location.reload(), 1500);
                 } else {
-                    alert(response.message);
+                    showNotification(response.message, false);
                 }
             },
             error: function() {
-                alert("An error occurred while processing your request.");
+                showNotification("An error occurred while processing your request.", false);
             }
         });
     }
 
-            function returnBook(requestId, button) {
+    function returnBook(requestId, button) {
         $.ajax({
-            url: '@Url.Action("ReturnBook", "Home")', // Ensures it goes to HomeController
+            url: '@Url.Action("ReturnBook", "Home")',
             type: 'POST',
             data: { requestId: requestId },
             success: function(response) {
                 if (response.success) {
-                    // Show the return sent notification as a toast
-                    alert("Return Sent");
-
-                    setTimeout(function() {
-                        location.reload(); // Reload the page after the message
-                    }, 1500); // Wait for 1.5 seconds before reloading the page
+                    showNotification("Return request sent successfully.");
+                    setTimeout(() => location.reload(), 1500);
                 } else {
-                    alert(response.message);
+                    showNotification(response.message, false);
                 }
             },
             error: function() {
-                alert("An error occurred while processing your request.");
+                showNotification("An error occurred while processing your request.", false);
             }
         });
     }
-
-
 </script>
+

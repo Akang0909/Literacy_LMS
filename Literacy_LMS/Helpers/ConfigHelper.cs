@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.IO;
+﻿using System;
 
 namespace Literacy_LMS.Helpers
 {
@@ -7,12 +6,14 @@ namespace Literacy_LMS.Helpers
     {
         public static string GetSendGridApiKey()
         {
-            var config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .Build();
+            var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
 
-            return config["SendGrid:ApiKey"];
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                throw new Exception("SendGrid API Key is missing. Set it as an environment variable.");
+            }
+
+            return apiKey;
         }
     }
 }

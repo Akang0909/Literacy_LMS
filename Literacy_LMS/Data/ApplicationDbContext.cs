@@ -10,23 +10,20 @@ namespace Literacy_LMS.Data
             : base(options)
         {
         }
+
         public DbSet<Book> Books { get; set; }
         public DbSet<VisitHours> VisitHours { get; set; }
-
         public DbSet<Student> Students { get; set; }
-
         public DbSet<IssueRequest> IssueRequests { get; set; }
-
         public DbSet<BorrowedBook> BorrowedBooks { get; set; }
-
-
         public DbSet<Payment> Payments { get; set; }
-
-
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            // Mark EmailViewModel as Keyless
+            builder.Entity<EmailViewModel>().HasNoKey();
         }
     }
 }

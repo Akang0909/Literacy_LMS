@@ -14,5 +14,6 @@
         public string BookStatus { get; set; }
 
         public bool IsArchived { get; set; } = false;
+
     }
 }

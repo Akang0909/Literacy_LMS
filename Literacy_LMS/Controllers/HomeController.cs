@@ -7,6 +7,7 @@ using Literacy_LMS.Data;
 using Microsoft.IdentityModel.Tokens;
 using iTextSharp.text.pdf;
 using iTextSharp.text;
+using Literacy_LMS.Helpers;
 
 
 namespace Literacy_LMS.Controllers
@@ -51,7 +52,14 @@ namespace Literacy_LMS.Controllers
             return View();
         }
 
-      
+
+        //testing emails api
+        public async Task<ActionResult> TestEmail()
+        {
+            await EmailService.SendEmailAsync("mr.ven09@gmail.com", "📢 Test Email", "This is a test email from your Library System.");
+            return Content("Test email sent!");
+        }
+
 
 
         ///new code working

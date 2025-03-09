@@ -22,6 +22,8 @@ namespace Literacy_LMS.Data
 
         public DbSet<Payment> Payments { get; set; }
 
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

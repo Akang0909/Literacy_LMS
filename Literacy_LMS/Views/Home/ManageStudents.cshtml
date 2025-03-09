@@ -1,0 +1,53 @@
+﻿@model List<Literacy_LMS.Models.StudentRequestViewModel>
+
+<!-- Search Bar -->
+<input type="text" id="searchInput" class="form-control mb-3" placeholder="Search for students..." />
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID Number</th>
+            <th>Student Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Book ID</th>
+            <th>Textbook</th>
+            <th>Status</th>
+            <th>Request Date</th>
+            <th>Due Date</th>
+            <th>Overdue Amount</th>
+            <th>Payment Status</th>
+        </tr>
+    </thead>
+    <tbody id="studentsTable">
+        @foreach (var student in Model)
+        {
+            <tr>
+                <td>@student.IDNumber</td>
+                <td>@student.StudentName</td>
+                <td>@student.Email</td>
+                <td>@student.PhoneNumber</td>
+                <td>@student.BookID</td>
+                <td>@student.Textbook</td>
+                <td>@student.Status</td>
+                <td>@student.RequestDate?.ToString("yyyy-MM-dd")</td>
+                <td>@student.DueDate?.ToString("yyyy-MM-dd")</td>
+                <td>@student.OverdueAmount</td>
+                <td>@student.PaymentStatus</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Live Search Script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#searchInput").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#studentsTable tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+    });
+</script>

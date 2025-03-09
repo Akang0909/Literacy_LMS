@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using iTextSharp.text.pdf;
 using iTextSharp.text;
 using Literacy_LMS.Helpers;
+using System.Text.RegularExpressions;
+
 
 
 namespace Literacy_LMS.Controllers
@@ -54,13 +56,75 @@ namespace Literacy_LMS.Controllers
 
 
         //testing emails api
-        public async Task<ActionResult> TestEmail()
+        public async Task<ActionResult> TestEmail(string recipientEmail)
         {
-            await EmailService.SendEmailAsync("mr.ven09@gmail.com", "📢 Test Email", "This is a test email from your Library System.");
-            return Content("Test email sent!");
+            if (string.IsNullOrEmpty(recipientEmail))
+            {
+                return Content("Error: Recipient email is required.");
+            }
+
+            if (!IsValidEmail(recipientEmail))
+            {
+                return Content("Error: Invalid email format.");
+            }
+
+            try
+            {
+                await EmailService.SendEmailAsync(recipientEmail, "📢 Test Email", "This is a test email from your Library System.");
+                return Content($"Test email sent to {recipientEmail}!");
+            }
+            catch (Exception ex)
+            {
+                return Content($"Error sending email: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult SendEmail()
+        {
+            return View("Messages");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendEmail(EmailViewModel model)
+        {
+            if (string.IsNullOrEmpty(model.ToEmail))
+            {
+                ModelState.AddModelError("ToEmail", "Recipient email is required.");
+            }
+            else if (!IsValidEmail(model.ToEmail))
+            {
+                ModelState.AddModelError("ToEmail", "Invalid email format.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View("Messages", model);
+            }
+
+            try
+            {
+                await EmailService.SendEmailAsync(model.ToEmail, model.Subject, model.Message);
+                ViewBag.Message = "Email sent successfully!";
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Error sending email: {ex.Message}");
+            }
+
+            return View("Messages", model);
+        }
+
+        // Email validation helper function
+        private bool IsValidEmail(string email)
+        {
+            string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+            return Regex.IsMatch(email, emailPattern);
         }
 
 
+
+        //testing emails api
 
         ///new code working
         public IActionResult Previous()
@@ -286,10 +350,7 @@ namespace Literacy_LMS.Controllers
         }
 
 
-        public IActionResult ManageStudents()
-        {
-            return View();
-        }
+     
 
         public IActionResult RecievedMessages()
         {
@@ -620,7 +681,35 @@ namespace Literacy_LMS.Controllers
             return View();
         }
 
-        
+        //this is for ManageStudents
+        public async Task<IActionResult> ManageStudents()
+        {
+            var studentData = await (from s in _context.Students
+                                     join u in _context.Users on s.UserId equals u.Id
+                                     join i in _context.IssueRequests on s.IDNumber equals i.IDNumber into issueGroup
+                                     from i in issueGroup.DefaultIfEmpty()
+                                     select new StudentRequestViewModel
+                                     {
+                                         IDNumber = s.IDNumber,
+                                         StudentName = s.FullName,
+                                         Email = u.Email,
+                                         PhoneNumber = u.PhoneNumber,
+                                         BookID = i != null ? i.BookID : (int?)null,
+                                         Textbook = i != null ? i.Textbook : "N/A",
+                                         Status = i != null ? i.Status : "No Request",
+                                         RequestDate = i != null ? i.RequestDate : (DateTime?)null,
+                                         DueDate = i != null ? i.DueDate : (DateTime?)null,
+                                         OverdueAmount = i != null ? i.OverdueAmount : (decimal?)null,
+                                         PaymentStatus = i != null ? i.PaymentStatus : "N/A"
+                                     }).ToListAsync();
+
+            return View(studentData); // Returns data to the ManageStudents.cshtml view
+        }
+
+
+
+
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

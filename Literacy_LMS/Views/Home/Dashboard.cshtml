@@ -87,6 +87,30 @@
         .content.expanded {
             margin-left: 60px; /* Adjust content margin when sidebar collapses */
         }
+
+    @@media (min-width: 769px) {
+        .dashboard-container {
+            flex-direction: row;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 97vh;
+        }
+
+            .sidebar.collapsed {
+                width: 60px;
+                height: 97vh;
+            }
+
+        .content {
+            margin-left: 250px;
+        }
+
+            .content.expanded {
+                margin-left: 60px;
+            }
+    }
 </style>
 
 

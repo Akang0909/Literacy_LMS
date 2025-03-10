@@ -13,6 +13,7 @@
 
     .dashboard-container {
         display: flex;
+        flex-direction: column;
         height: 100vh;
         margin: 0;
         padding: 0;
@@ -34,12 +35,11 @@
 
     /* Sidebar Styles */
     .sidebar {
-        height: 97vh;
-        width: 250px;
+        width: 100%;
         background-color: #343a40;
         padding-top: 20px;
         transition: 0.5s;
-        overflow-y: auto;
+        overflow: hidden;
         white-space: nowrap;
         box-sizing: border-box;
         margin: 0;
@@ -62,17 +62,13 @@
 
         /* Collapsed state for sidebar */
         .sidebar.collapsed {
-            width: 60px;
+            height: auto;
+            padding-top: 0;
         }
 
-            .sidebar.collapsed a {
-                justify-content: center;
-                padding: 10px 0;
+            .sidebar.collapsed #sidebar-links span {
+                display: none;
             }
-
-                .sidebar.collapsed a span {
-                    display: none;
-                }
 
     /* Content area styles */
     .content {
@@ -85,10 +81,33 @@
         text-align: center;
     }
 
-        /* Adjust content margin when sidebar is collapsed */
+    /* Responsive styles */
+    @@media (min-width: 769px) {
+        .dashboard-container
+
+    {
+        flex-direction: row;
+    }
+
+    .sidebar {
+        width: 250px;
+        height: 97vh;
+    }
+
+        .sidebar.collapsed {
+            width: 60px;
+            height: 97vh;
+        }
+
+    .content {
+        margin-left: 250px;
+    }
+
         .content.expanded {
             margin-left: 60px;
         }
+
+    }
 </style>
 
 <!-- Dashboard -->
@@ -100,11 +119,12 @@
             <i class="fa fa-bars"></i>
         </button>
 
-        <a href="@Url.Action("Dashboard", "Students")"><i class="fa fa-home"></i> <span>Home</span></a>
-        <a href="@Url.Action("Books", "Students")"><i class="fa fa-book"></i> <span>All Books</span></a>
-        <a href="@Url.Action("Previous", "Students")"><i class="fa fa-book"></i> <span>Previously Borrowed Books</span></a>
-        <a href="@Url.Action("Currently", "Students")"><i class="fa fa-book"></i> <span>Currently Borrowed Books</span></a>
-
+        <div id="sidebar-links">
+            <a href="@Url.Action("Dashboard", "Students")"><i class="fa fa-home"></i> <span>Home</span></a>
+            <a href="@Url.Action("Books", "Students")"><i class="fa fa-book"></i> <span>All Books</span></a>
+            <a href="@Url.Action("Previous", "Students")"><i class="fa fa-book"></i> <span>Previously Borrowed Books</span></a>
+            <a href="@Url.Action("Currently", "Students")"><i class="fa fa-book"></i> <span>Currently Borrowed Books</span></a>
+        </div>
     </div>
 
     <!-- Main Content -->
@@ -130,11 +150,6 @@
             </div>
         </div>
     </div>
-
-
-
-
-
 </div>
 
 @section Scripts {
@@ -144,6 +159,9 @@
             // Toggle sidebar (collapsed or expanded)
             $('#menu-toggle').click(function () {
                 $('#sidebar').toggleClass('collapsed');
+                if ($(window).width() < 769) {
+                    $('#sidebar-links').toggle();
+                }
                 $('#content').toggleClass('expanded');
             });
         });
